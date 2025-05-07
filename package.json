@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-groner",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Nodes para o Groner CRM (CRM de Solar)",
   "keywords": [
     "n8n-community-node-package"
@@ -36,12 +36,10 @@
   "n8n": {
     "n8nNodesApiVersion": 1,
     "credentials": [
-      "dist/credentials/ExampleCredentialsApi.credentials.js",
-      "dist/credentials/HttpBinApi.credentials.js"
+      "dist/credentials/GronerApi.credentials.js"
     ],
     "nodes": [
-      "dist/nodes/ExampleNode/ExampleNode.node.js",
-      "dist/nodes/HttpBin/HttpBin.node.js"
+      "dist/nodes/GronerLeadFluentForm/GronerLeadFluentForm.node.js"
     ]
   },
   "devDependencies": {
