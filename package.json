@@ -1,19 +1,19 @@
 {
-  "name": "n8n-nodes-<...>",
+  "name": "n8n-nodes-groner",
   "version": "0.1.0",
-  "description": "",
+  "description": "Nodes para o Groner CRM (CRM de Solar)",
   "keywords": [
     "n8n-community-node-package"
   ],
   "license": "MIT",
   "homepage": "",
   "author": {
-    "name": "",
-    "email": ""
+    "name": "Groner",
+    "email": "contato@gronercrm.com.br"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/<...>/n8n-nodes-<...>.git"
+    "url": "https://github.com/groner/n8n-nodes-groner.git"
   },
   "engines": {
     "node": ">=18.10",

@@ -1,46 +1,60 @@
 ![Banner image](https://user-images.githubusercontent.com/10284570/173569848-c624317f-42b1-45a6-ab09-f0ea3c247648.png)
 
-# n8n-nodes-starter
+# n8n-nodes-groner
 
-This repo contains example nodes to help you get started building your own custom integrations for [n8n](n8n.io). It includes the node linter and other dependencies.
+Este repositório contém nodes customizados para integração do n8n com a API Groner.
 
-To make your custom node available to the community, you must create it as an npm package, and [submit it to the npm registry](https://docs.npmjs.com/packages-and-modules/contributing-packages-to-the-registry).
+## Nodes disponíveis
 
-## Prerequisites
+- **GronerLeadFluentForm**: Envia leads para o endpoint FluentForm da Groner.
 
-You need the following installed on your development machine:
+## Pré-requisitos
 
-* [git](https://git-scm.com/downloads)
-* Node.js and pnpm. Minimum version Node 18. You can find instructions on how to install both using nvm (Node Version Manager) for Linux, Mac, and WSL [here](https://github.com/nvm-sh/nvm). For Windows users, refer to Microsoft's guide to [Install NodeJS on Windows](https://docs.microsoft.com/en-us/windows/dev-environment/javascript/nodejs-on-windows).
-* Install n8n with:
+Você precisa ter instalado em sua máquina de desenvolvimento:
+
+- [git](https://git-scm.com/downloads)
+- Node.js e pnpm (Node 18 ou superior)
+- n8n instalado globalmente:
   ```
   pnpm install n8n -g
   ```
-* Recommended: follow n8n's guide to [set up your development environment](https://docs.n8n.io/integrations/creating-nodes/build/node-development-environment/).
 
-## Using this starter
+## Instalação
 
-These are the basic steps for working with the starter. For detailed guidance on creating and publishing nodes, refer to the [documentation](https://docs.n8n.io/integrations/creating-nodes/).
-
-1. [Generate a new repository](https://github.com/n8n-io/n8n-nodes-starter/generate) from this template repository.
-2. Clone your new repo:
+1. Clone este repositório:
    ```
-   git clone https://github.com/<your organization>/<your-repo-name>.git
+   git clone https://github.com/<sua-organizacao>/n8n-nodes-groner.git
    ```
-3. Run `pnpm i` to install dependencies.
-4. Open the project in your editor.
-5. Browse the examples in `/nodes` and `/credentials`. Modify the examples, or replace them with your own nodes.
-6. Update the `package.json` to match your details.
-7. Run `pnpm lint` to check for errors or `pnpm lintfix` to automatically fix errors when possible.
-8. Test your node locally. Refer to [Run your node locally](https://docs.n8n.io/integrations/creating-nodes/test/run-node-locally/) for guidance.
-9. Replace this README with documentation for your node. Use the [README_TEMPLATE](README_TEMPLATE.md) to get started.
-10. Update the LICENSE file to use your details.
-11. [Publish](https://docs.npmjs.com/packages-and-modules/contributing-packages-to-the-registry) your package to npm.
+2. Instale as dependências:
+   ```
+   pnpm install
+   ```
+3. Abra o projeto no seu editor de código.
 
-## More information
+## Configuração de Credenciais
 
-Refer to our [documentation on creating nodes](https://docs.n8n.io/integrations/creating-nodes/) for detailed information on building your own nodes.
+1. No n8n, adicione uma nova credencial do tipo **Groner API**.
+2. Preencha os campos:
+   - **Tenant**: Seu subdomínio Groner (ex: `minhaempresa`)
+   - **API Key**: Sua chave de API Groner
 
-## License
+## Como usar o node GronerLeadFluentForm
 
-[MIT](https://github.com/n8n-io/n8n-nodes-starter/blob/master/LICENSE.md)
+1. Adicione o node **GronerLeadFluentForm** ao seu workflow.
+2. Preencha os campos obrigatórios e opcionais conforme necessário:
+   - Nome, Email, Telefone, etc.
+3. O node irá enviar os dados para o endpoint `/lead/FluentForm/{codOrigem}` da API Groner.
+4. O retorno da API será disponibilizado como saída do node.
+
+## Scripts úteis
+
+- `pnpm lint` — Verifica problemas de lint no projeto
+- `pnpm lintfix` — Corrige automaticamente problemas de lint
+
+## Contribuição
+
+Pull requests são bem-vindos! Sinta-se à vontade para abrir issues ou sugerir melhorias.
+
+## Licença
+
+[MIT](LICENSE.md)
