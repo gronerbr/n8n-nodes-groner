@@ -163,6 +163,8 @@ export class GronerLeadFluentForm implements INodeType {
 		for (let i = 0; i < items.length; i++) {
 			try {
 				const codOrigem = this.getNodeParameter('codOrigem', i, '');
+				const customUrlRaw = this.getNodeParameter('url', i, '');
+				const customUrl = typeof customUrlRaw === 'string' ? customUrlRaw : '';
 				const body: Record<string, any> = {
 					nome: this.getNodeParameter('nome', i),
 					email: this.getNodeParameter('email', i),
@@ -175,7 +177,6 @@ export class GronerLeadFluentForm implements INodeType {
 					responsavelId: this.getNodeParameter('responsavelId', i, ''),
 					emailResponsavel: this.getNodeParameter('emailResponsavel', i, ''),
 					nota: this.getNodeParameter('nota', i, ''),
-					url: this.getNodeParameter('url', i, ''),
 					campanha: this.getNodeParameter('campanha', i, ''),
 					anuncio: this.getNodeParameter('anuncio', i, ''),
 					conjuntoAnuncios: this.getNodeParameter('conjuntoAnuncios', i, ''),
@@ -187,10 +188,16 @@ export class GronerLeadFluentForm implements INodeType {
 
 				// Remove campos vazios
 				Object.keys(body).forEach(key => (body[key] === '' || body[key] === undefined) && delete body[key]);
+				// Não enviar o campo 'url' no corpo
+				if (body.url !== undefined) {
+					delete body.url;
+				}
 
 				const tenant = credentials.tenant;
 				const apiKey = credentials.apiKey;
-				const url = `https://${tenant}.api.groner.app/lead/FluentForm/${codOrigem}`;
+				const url = customUrl && customUrl.trim() !== ''
+					? customUrl.trim()
+					: `https://${tenant}.api.groner.app/lead/FluentForm/${codOrigem}`;
 
 				const options = {
 					method: 'POST' as 'POST',
@@ -200,6 +207,7 @@ export class GronerLeadFluentForm implements INodeType {
 					},
 					form: body,
 					json: false,
+					url,
 				};
 
 				const responseData = await this.helpers.request(options);
