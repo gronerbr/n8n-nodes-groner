@@ -33,7 +33,7 @@ export async function executePesquisarNegocios(this: IExecuteFunctions): Promise
 				json: true,
 			};
 			const responseData = await this.helpers.request(options);
-			returnData.push({ json: responseData.Content ?? responseData });
+			returnData.push({ json: responseData.Content.list ?? responseData });
 		} catch (error) {
 			if (this.continueOnFail()) {
 				returnData.push({ json: { error: error.message }, pairedItem: i });
