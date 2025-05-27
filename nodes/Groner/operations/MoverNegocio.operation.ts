@@ -1,4 +1,4 @@
-import type { IExecuteFunctions, INodeExecutionData, ILoadOptionsFunctions } from 'n8n-workflow';
+import type { IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
 import { moverNegocioFields } from '../fields/MoverNegocio.fields';
 import { NodeOperationError } from 'n8n-workflow';
 
