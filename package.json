@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-groner",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "Nodes para o Groner CRM (CRM de Solar)",
   "keywords": [
     "n8n-community-node-package"
