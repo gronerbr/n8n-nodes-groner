@@ -10,11 +10,14 @@ export const moverNegocioFields = [
 		displayOptions: { show: { operation: ['moverNegocio'] } },
 	},
 	{
-		displayName: 'Status ID',
+		displayName: 'Status',
 		name: 'statusId',
-		type: 'string' as NodePropertyTypes,
+		type: 'options' as NodePropertyTypes,
 		required: true,
 		default: '',
+		typeOptions: {
+			loadOptionsMethod: 'getStatuses',
+		},
 		displayOptions: { show: { operation: ['moverNegocio'] } },
 	},
 ];

@@ -16,6 +16,7 @@ import { enviarMensagemWhatsAppDescription, executeEnviarMensagemWhatsApp } from
 import { moverNegocioDescription, executeMoverNegocio } from './operations/MoverNegocio.operation';
 import { obterOrcamentoNegocioDescription, executeObterOrcamentoNegocio } from './operations/ObterOrcamentoNegocio.operation';
 import { pesquisarTarefasDescription, executePesquisarTarefas } from './operations/PesquisarTarefas.operation';
+import { getStatuses } from './loadOptions/getStatuses';
 
 export class Groner implements INodeType {
 	description: INodeTypeDescription = {
@@ -70,6 +71,12 @@ export class Groner implements INodeType {
 			...obterOrcamentoNegocioDescription,
 			...pesquisarTarefasDescription,
 		],
+	};
+
+	methods = {
+		loadOptions: {
+			getStatuses,
+		},
 	};
 
 	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
