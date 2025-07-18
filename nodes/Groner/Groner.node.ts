@@ -16,7 +16,7 @@ import { enviarMensagemWhatsAppDescription, executeEnviarMensagemWhatsApp } from
 import { moverNegocioDescription, executeMoverNegocio } from './operations/MoverNegocio.operation';
 import { obterOrcamentoNegocioDescription, executeObterOrcamentoNegocio } from './operations/ObterOrcamentoNegocio.operation';
 import { pesquisarTarefasDescription, executePesquisarTarefas } from './operations/PesquisarTarefas.operation';
-import { getStatuses } from './loadOptions/getStatuses';
+import { getStatuses } from './loadOptions/getStatuses.js';
 
 export class Groner implements INodeType {
 	description: INodeTypeDescription = {
@@ -25,7 +25,7 @@ export class Groner implements INodeType {
 		group: ['transform'],
 		version: 1,
 		subtitle: '={{ $parameter["operation"] + ": " + $parameter["resource"] }}',
-		description: 'Integração com a API Groner',
+		description: 'Integration with Groner API',
 		icon: 'file:logogroner.svg',
 		defaults: {
 			name: 'Groner',

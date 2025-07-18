@@ -15,7 +15,7 @@ export class GronerApi implements ICredentialType {
 			type: 'string',
 			default: '',
 			placeholder: 'exemplo-empresa',
-			description: 'Seu subdomínio do Groner (tenant)',
+			description: 'Your Groner subdomain (tenant)',
 		},
 		{
 			displayName: 'API Key',
@@ -25,7 +25,7 @@ export class GronerApi implements ICredentialType {
 				password: true,
 			},
 			default: '',
-			description: 'Sua chave de API do Groner',
+			description: 'Your Groner API key',
 		},
 	];
 

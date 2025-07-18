@@ -2,165 +2,474 @@
 
 # n8n-nodes-groner
 
-Este repositório contém nodes customizados para integração do n8n com a API Groner (CRM Solar).
+This repository contains custom nodes for integrating n8n with the Groner API (Solar CRM). The Groner node provides comprehensive functionality to manage leads, projects, tasks, and communications within the Groner CRM system.
 
 ---
 
-## Node principal
+## 🚀 Main Node
 
-- **Groner**: Node principal para integração com a API Groner, cobrindo todas as principais operações de CRM.
+- **Groner**: Primary node for integration with the Groner API, covering all major CRM operations including lead management, project tracking, task creation, and WhatsApp messaging.
 
-## Operações disponíveis
+## 📋 Available Operations
 
-| Operação                        | Descrição                                                                                 |
-|---------------------------------|------------------------------------------------------------------------------------------|
-| Criar Negócio                   | Cria um novo negócio (lead/projeto) no Groner.                                            |
-| Pesquisar Negócios              | Busca negócios (projetos) com filtros avançados e paginação.                              |
-| Adicionar Etiquetas             | Adiciona etiquetas (tags) a um negócio existente.                                         |
-| Adicionar Nota                  | Adiciona uma nota/ocorrência a um negócio.                                                |
-| Adicionar Tarefa                | Cria uma nova tarefa vinculada a um negócio.                                              |
-| Editar Contato Por Propriedade  | Edita propriedades de um contato (lead) existente.                                        |
-| Editar Negócio Por Propriedade  | Edita propriedades de um negócio (projeto) existente.                                     |
-| Enviar Mensagem WhatsApp        | Envia mensagem WhatsApp para um lead/contato via Groner.                                  |
-| Mover Negócio                   | Altera o status/etapa de um negócio.                                                      |
-| Obter Orçamento Do Negócio      | Busca orçamentos vinculados a um negócio.                                                 |
-| Pesquisar Tarefas               | Busca tarefas com filtros avançados.                                                      |
-
----
-
-## Pré-requisitos
-
-Você precisa ter instalado em sua máquina de desenvolvimento:
-
-- [git](https://git-scm.com/downloads)
-- Node.js e pnpm (Node 18 ou superior)
-- n8n instalado globalmente:
-  ```
-  pnpm install n8n -g
-  ```
-
-## Instalação
-
-1. Clone este repositório:
-   ```
-   git clone https://github.com/<sua-organizacao>/n8n-nodes-groner.git
-   ```
-2. Instale as dependências:
-   ```
-   pnpm install
-   ```
-3. Abra o projeto no seu editor de código.
-4. Rode o build para copiar os ícones:
-   ```
-   pnpm build
-   ```
-
-## Configuração de Credenciais
-
-1. No n8n, adicione uma nova credencial do tipo **Groner API**.
-2. Preencha os campos:
-   - **Tenant**: Seu subdomínio Groner (ex: `minhaempresa`)
-   - **API Key**: Sua chave de API Groner
+| Operation | Description | HTTP Method | Endpoint |
+|-----------|-------------|-------------|----------|
+| **Create Deal** | Creates a new deal (lead/project) in Groner with comprehensive lead tracking capabilities. | POST | `/api/lead/FluentForm/{codOrigem}` |
+| **Search Deals** | Searches for deals (projects) with advanced filters and pagination support. | GET | `/api/negocio/pesquisar` |
+| **Add Labels** | Adds labels (tags) to an existing deal for better organization and categorization. | POST | `/api/negocio/{id}/etiquetas` |
+| **Add Note** | Adds a note/occurrence to a deal for tracking interactions and updates. | POST | `/api/negocio/{id}/ocorrencia` |
+| **Add Task** | Creates a new task linked to a deal with assignment and scheduling capabilities. | POST | `/api/tarefa` |
+| **Edit Contact By Property** | Edits specific properties of an existing contact (lead) for data updates. | PUT | `/api/lead/{id}` |
+| **Edit Deal By Property** | Edits specific properties of an existing deal (project) for status updates. | PUT | `/api/negocio/{id}` |
+| **Send WhatsApp Message** | Sends WhatsApp messages to leads/contacts through Groner's integrated messaging system. | POST | `/api/whatsapp/enviar` |
+| **Move Deal** | Changes the status/stage of a deal in the sales pipeline. | PUT | `/api/negocio/{id}/status` |
+| **Get Deal Quote** | Retrieves quotes linked to a specific deal/project. | GET | `/api/orcamento/negocio/{projetoId}` |
+| **Search Tasks** | Searches for tasks with advanced filtering options and pagination. | GET | `/api/tarefa/pesquisar` |
 
 ---
 
-## Como usar o node Groner
+## 🔧 Prerequisites
 
-1. Adicione o node **Groner** ao seu workflow.
-2. Escolha a operação desejada no campo "Operation".
-3. Preencha os campos obrigatórios e opcionais conforme necessário para a operação escolhida.
-4. Execute o workflow. O retorno da API será disponibilizado como saída do node, um item por registro retornado (quando aplicável).
+Before installing and using this package, ensure you have the following installed on your development machine:
 
-### Exemplos de uso e payloads
+### Required Software
+- **[Git](https://git-scm.com/downloads)** - Version control system
+- **[Node.js](https://nodejs.org/)** - Version 18.10 or higher
+- **[pnpm](https://pnpm.io/)** - Package manager (Version 9.1 or higher)
 
-#### Criar Negócio
-- **Campos principais:** nome, email, telefone, cidade, documento, tipoPessoa, etc.
-- **Exemplo de uso:**
-  - Escolha "Criar Negócio" em Operation.
-  - Preencha os dados do lead/negócio.
-  - Execute para criar um novo registro no Groner.
+### n8n Installation
+Install n8n globally using pnpm:
+```bash
+pnpm install n8n -g
+```
 
-#### Pesquisar Negócios
-- **Campos de filtro:** etapaId, pageNumber, pageSize, query, etiquetasIds, vendedorResponsavelId, etc.
-- **Exemplo de uso:**
-  - Escolha "Pesquisar Negócios".
-  - Preencha filtros conforme desejado (ex: etapaId, pageSize).
-  - O node retorna cada negócio encontrado como um item individual.
-
-#### Adicionar Etiquetas
-- **Campos:** id (ID do negócio), etiquetas (JSON de etiquetas)
-- **Exemplo de uso:**
-  - Escolha "Adicionar Etiquetas".
-  - Informe o ID do negócio e as etiquetas (ex: `["VIP","Solar"]`).
-
-#### Adicionar Nota
-- **Campos:** id (ID do negócio), ocorrencia, marcacoes
-- **Exemplo de uso:**
-  - Escolha "Adicionar Nota".
-  - Preencha o ID do negócio, a ocorrência e marcações.
-
-#### Adicionar Tarefa
-- **Campos:** titulo, descricao, tipoId, statusId, projetoId, usuariosIds, datas, etc.
-- **Exemplo de uso:**
-  - Escolha "Adicionar Tarefa".
-  - Preencha os campos obrigatórios e execute.
-
-#### Editar Contato Por Propriedade
-- **Campos:** id (ID do lead), propriedade, valor
-- **Exemplo de uso:**
-  - Escolha "Editar Contato Por Propriedade".
-  - Informe o ID do lead, a propriedade a editar e o novo valor.
-
-#### Editar Negócio Por Propriedade
-- **Campos:** id (ID do negócio), propriedade, valor
-- **Exemplo de uso:**
-  - Escolha "Editar Negócio Por Propriedade".
-  - Informe o ID do negócio, a propriedade a editar e o novo valor.
-
-#### Enviar Mensagem WhatsApp
-- **Campos:** leadId, mensagem, preVendedor, vendedor, tecnico, celular, urlImagem, urlAudio, urlVideo, urlDocumento
-- **Exemplo de uso:**
-  - Escolha "Enviar Mensagem WhatsApp".
-  - Preencha os campos necessários para envio da mensagem.
-
-#### Mover Negócio
-- **Campos:** id (ID do negócio), statusId (novo status)
-- **Exemplo de uso:**
-  - Escolha "Mover Negócio".
-  - Informe o ID do negócio e o novo status.
-
-#### Obter Orçamento Do Negócio
-- **Campos:** projetoId
-- **Exemplo de uso:**
-  - Escolha "Obter Orçamento Do Negócio".
-  - Informe o ID do projeto/negócio.
-
-#### Pesquisar Tarefas
-- **Campos de filtro:** leadId, projetoId, tipoId, pageNumber, pageSize, query, usuarioId, lojasIds, statusId, ordenarPor
-- **Exemplo de uso:**
-  - Escolha "Pesquisar Tarefas".
-  - Preencha filtros conforme desejado.
+### System Requirements
+- **Node.js**: >=18.10
+- **pnpm**: >=9.1
+- **n8n-workflow**: Compatible version
 
 ---
 
-## Observações importantes
+## 📦 Installation
 
-- **Saída dos nodes:** Para operações de busca, cada item retornado pela API será um item individual na saída do node n8n.
-- **Erros:** Se a API retornar erro, a mensagem será exibida no painel de execução do node.
-- **Ícone customizado:** O node exibe o ícone do Groner se o arquivo `logogroner.svg` estiver presente na pasta do node.
+### 1. Clone the Repository
+```bash
+git clone https://github.com/gronerbr/n8n-nodes-groner.git
+cd n8n-nodes-groner
+```
+
+### 2. Install Dependencies
+```bash
+pnpm install
+```
+
+### 3. Build the Project
+```bash
+pnpm build
+```
+This command will:
+- Compile TypeScript files
+- Copy custom icons to the distribution folder
+- Prepare the package for use
+
+### 4. Development Mode (Optional)
+For development with automatic recompilation:
+```bash
+pnpm dev
+```
 
 ---
 
-## Scripts úteis
+## 🔐 Credentials Configuration
 
-- `pnpm lint` — Verifica problemas de lint no projeto
-- `pnpm lintfix` — Corrige automaticamente problemas de lint
-- `pnpm build` — Compila o projeto e copia os ícones
+### Setting Up Groner API Credentials
 
-## Contribuição
+1. **Access n8n Credentials**: In your n8n instance, navigate to Settings → Credentials
+2. **Add New Credential**: Click "Add Credential" and select **Groner API**
+3. **Configure Credentials**:
+   - **Tenant**: Your Groner subdomain (e.g., `mycompany`)
+   - **API Key**: Your Groner API authentication key
 
-Pull requests são bem-vindos! Sinta-se à vontade para abrir issues ou sugerir melhorias.
+### Credential Details
 
-## Licença
+| Field | Type | Required | Description | Example |
+|-------|------|----------|-------------|---------|
+| **Tenant** | String | Yes | Your Groner subdomain identifier | `mycompany` |
+| **API Key** | Password | Yes | Your Groner API authentication token | `groner_api_key_123...` |
 
-[MIT](LICENSE.md)
+### API Endpoint Structure
+The node automatically constructs API endpoints using your tenant:
+```
+https://{tenant}.api.groner.app/api/{endpoint}
+```
+
+---
+
+## 🎯 How to Use the Groner Node
+
+### Basic Workflow Setup
+
+1. **Add the Node**: Drag and drop the **Groner** node into your n8n workflow
+2. **Select Operation**: Choose the desired operation from the "Operation" dropdown
+3. **Configure Parameters**: Fill in required and optional fields based on the selected operation
+4. **Execute**: Run the workflow to process the operation
+
+### Output Format
+- **Success**: Returns API response data as JSON
+- **Search Operations**: Each returned item becomes an individual n8n item
+- **Error Handling**: Errors are displayed in the node execution panel
+
+---
+
+## 📖 Detailed Operation Guide
+
+### 1. Create Deal (Lead/Project)
+
+Creates a new lead or project in Groner with comprehensive tracking capabilities.
+
+#### Required Fields
+- **Name** (`nome`): Full name of the contact
+- **Email** (`email`): Contact email address
+- **Phone** (`telefone`): Contact phone number
+
+#### Optional Fields
+- **City** (`cidade`): Contact's city
+- **Document** (`documento`): CPF or CNPJ number
+- **Person Type** (`tipoPessoa`): PF (Individual) or PJ (Company)
+- **State** (`uf`): Brazilian state abbreviation
+- **Account Value** (`valorConta`): Estimated project value
+- **Origin Code** (`codOrigem`): Lead source identifier
+- **Responsible ID** (`responsavelId`): Assigned salesperson ID
+- **Responsible Email** (`emailResponsavel`): Salesperson email
+- **Note** (`nota`): Initial notes about the lead
+- **Campaign** (`campanha`): Marketing campaign identifier
+- **Advertisement** (`anuncio`): Ad campaign reference
+- **Ad Set** (`conjuntoAnuncios`): Ad group identifier
+- **Lead Tracking Code** (`codigoLeadTracking`): Tracking code for analytics
+- **Trade Name** (`nomeFantasia`): Company trade name (for PJ)
+- **Segment** (`segmento`): Business segment classification
+- **Project Type** (`tipoProjetoId`): Type of solar project
+
+#### Example Usage
+```json
+{
+  "nome": "John Doe",
+  "email": "john.doe@example.com",
+  "telefone": "+5511999999999",
+  "cidade": "São Paulo",
+  "documento": "123.456.789-00",
+  "tipoPessoa": "PF",
+  "valorConta": 25000,
+  "nota": "Interested in residential solar installation"
+}
+```
+
+### 2. Search Deals
+
+Searches for existing deals with advanced filtering and pagination.
+
+#### Filter Parameters
+- **Stage ID** (`etapaId`): Filter by sales pipeline stage
+- **Page Number** (`pageNumber`): Pagination page (default: 1)
+- **Page Size** (`pageSize`): Items per page (default: 20)
+- **Query** (`query`): Text search across deal data
+- **Label IDs** (`etiquetasIds`): Filter by specific labels
+- **Responsible Seller ID** (`vendedorResponsavelId`): Filter by assigned seller
+
+#### Example Usage
+```json
+{
+  "etapaId": "1",
+  "pageNumber": 1,
+  "pageSize": 50,
+  "query": "solar installation"
+}
+```
+
+### 3. Add Labels
+
+Adds organizational labels to existing deals.
+
+#### Required Fields
+- **ID** (`id`): Deal ID
+- **Labels** (`etiquetas`): Array of label names
+
+#### Example Usage
+```json
+{
+  "id": "12345",
+  "etiquetas": ["VIP", "Solar", "High Priority"]
+}
+```
+
+### 4. Add Note
+
+Adds notes or occurrences to track deal interactions.
+
+#### Required Fields
+- **ID** (`id`): Deal ID
+- **Occurrence** (`ocorrencia`): Note content
+- **Mentions** (`marcacoes`): Optional user mentions
+
+#### Example Usage
+```json
+{
+  "id": "12345",
+  "ocorrencia": "Customer requested quote for 10kW system",
+  "marcacoes": "@sales_team"
+}
+```
+
+### 5. Add Task
+
+Creates tasks linked to deals with assignment capabilities.
+
+#### Required Fields
+- **Title** (`titulo`): Task title
+- **Description** (`descricao`): Task description
+- **Type ID** (`tipoId`): Task type identifier
+- **Status ID** (`statusId`): Task status
+- **Project ID** (`projetoId`): Associated deal ID
+- **User IDs** (`usuariosIds`): Assigned user IDs
+- **Dates** (`datas`): Task scheduling information
+
+#### Example Usage
+```json
+{
+  "titulo": "Follow up call",
+  "descricao": "Call customer to discuss proposal",
+  "tipoId": "1",
+  "statusId": "1",
+  "projetoId": "12345",
+  "usuariosIds": ["user1", "user2"],
+  "datas": {
+    "inicio": "2024-01-15T10:00:00Z",
+    "fim": "2024-01-15T11:00:00Z"
+  }
+}
+```
+
+### 6. Edit Contact By Property
+
+Updates specific properties of existing contacts.
+
+#### Required Fields
+- **ID** (`id`): Contact/Lead ID
+- **Property** (`propriedade`): Property name to update
+- **Value** (`valor`): New property value
+
+#### Example Usage
+```json
+{
+  "id": "12345",
+  "propriedade": "email",
+  "valor": "new.email@example.com"
+}
+```
+
+### 7. Edit Deal By Property
+
+Updates specific properties of existing deals.
+
+#### Required Fields
+- **ID** (`id`): Deal ID
+- **Property** (`propriedade`): Property name to update
+- **Value** (`valor`): New property value
+
+#### Example Usage
+```json
+{
+  "id": "12345",
+  "propriedade": "valorConta",
+  "valor": 30000
+}
+```
+
+### 8. Send WhatsApp Message
+
+Sends WhatsApp messages through Groner's integrated messaging system.
+
+#### Required Fields
+- **Lead ID** (`leadId`): Target lead ID
+- **Message** (`mensagem`): Message content
+
+#### Optional Fields
+- **Pre-seller** (`preVendedor`): Pre-sales team member
+- **Seller** (`vendedor`): Sales team member
+- **Technician** (`tecnico`): Technical team member
+- **Phone** (`celular`): Direct phone number
+- **Image URL** (`urlImagem`): Image attachment URL
+- **Audio URL** (`urlAudio`): Audio attachment URL
+- **Video URL** (`urlVideo`): Video attachment URL
+- **Document URL** (`urlDocumento`): Document attachment URL
+
+#### Example Usage
+```json
+{
+  "leadId": "12345",
+  "mensagem": "Hello! Here's your solar installation quote.",
+  "urlImagem": "https://example.com/quote.pdf"
+}
+```
+
+### 9. Move Deal
+
+Changes the status/stage of a deal in the sales pipeline.
+
+#### Required Fields
+- **ID** (`id`): Deal ID
+- **Status ID** (`statusId`): New status identifier
+
+#### Example Usage
+```json
+{
+  "id": "12345",
+  "statusId": "2"
+}
+```
+
+### 10. Get Deal Quote
+
+Retrieves quotes associated with a specific deal.
+
+#### Required Fields
+- **Project ID** (`projetoId`): Deal/Project ID
+
+#### Example Usage
+```json
+{
+  "projetoId": "12345"
+}
+```
+
+### 11. Search Tasks
+
+Searches for tasks with comprehensive filtering options.
+
+#### Filter Parameters
+- **Lead ID** (`leadId`): Filter by associated lead
+- **Project ID** (`projetoId`): Filter by associated project
+- **Type ID** (`tipoId`): Filter by task type
+- **Page Number** (`pageNumber`): Pagination page
+- **Page Size** (`pageSize`): Items per page
+- **Query** (`query`): Text search
+- **User ID** (`usuarioId`): Filter by assigned user
+- **Store IDs** (`lojasIds`): Filter by store locations
+- **Status ID** (`statusId`): Filter by task status
+- **Sort By** (`ordenarPor`): Sort criteria
+
+#### Example Usage
+```json
+{
+  "projetoId": "12345",
+  "statusId": "1",
+  "pageSize": 20,
+  "ordenarPor": "dataCriacao"
+}
+```
+
+---
+
+## 🔧 Development Scripts
+
+| Script | Description |
+|--------|-------------|
+| `pnpm build` | Compiles TypeScript and copies icons |
+| `pnpm dev` | Runs TypeScript compiler in watch mode |
+| `pnpm lint` | Checks for linting issues |
+| `pnpm lintfix` | Automatically fixes linting issues |
+| `pnpm format` | Formats code using Prettier |
+| `pnpm prepublishOnly` | Builds and lints before publishing |
+
+---
+
+## 📁 Project Structure
+
+```
+n8n-nodes-groner/
+├── credentials/
+│   └── GronerApi.credentials.ts    # API authentication
+├── nodes/
+│   └── Groner/
+│       ├── fields/                 # Field definitions
+│       ├── loadOptions/            # Dynamic options
+│       ├── operations/             # Operation implementations
+│       ├── Groner.node.ts          # Main node file
+│       └── logogroner.svg          # Custom icon
+├── package.json                    # Project configuration
+├── tsconfig.json                   # TypeScript configuration
+└── gulpfile.js                     # Build configuration
+```
+
+---
+
+## ⚠️ Important Notes
+
+### API Response Handling
+- **Search Operations**: Each item returned by the API becomes an individual n8n item for easy processing
+- **Error Handling**: API errors are displayed in the node execution panel with detailed error messages
+- **Authentication**: Uses Bearer token authentication with your API key
+
+### Custom Icon
+- The node displays the Groner logo if the `logogroner.svg` file is present in the node directory
+- The icon is automatically copied during the build process
+
+### Data Validation
+- Empty fields are automatically removed from API requests
+- Required fields are validated before sending requests
+- Date formats should follow ISO 8601 standard
+
+### Rate Limiting
+- Be aware of Groner API rate limits
+- Implement appropriate delays between requests in high-volume workflows
+
+---
+
+## 🤝 Contributing
+
+We welcome contributions! Here's how you can help:
+
+### Reporting Issues
+- Use the GitHub issue tracker
+- Provide detailed error messages and steps to reproduce
+- Include your n8n version and node configuration
+
+### Submitting Pull Requests
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Run `pnpm lint` and `pnpm build`
+5. Submit a pull request with detailed description
+
+### Development Guidelines
+- Follow TypeScript best practices
+- Maintain consistent code formatting
+- Add appropriate error handling
+- Include field validation where necessary
+
+---
+
+## 📄 License
+
+This project is licensed under the [MIT License](LICENSE.md).
+
+---
+
+## 📞 Support
+
+For support and questions:
+- **Email**: contato@gronercrm.com.br
+- **GitHub Issues**: [Create an issue](https://github.com/gronerbr/n8n-nodes-groner/issues)
+- **Documentation**: This README and inline code comments
+
+---
+
+## 🔄 Version History
+
+- **v0.1.9**: Current version with comprehensive CRM operations
+- **v0.1.8**: Added WhatsApp messaging capabilities
+- **v0.1.7**: Enhanced search and filtering options
+- **v0.1.6**: Improved error handling and validation
+- **v0.1.5**: Initial release with basic operations
+
+For detailed changelog, see the [GitHub releases](https://github.com/gronerbr/n8n-nodes-groner/releases).
