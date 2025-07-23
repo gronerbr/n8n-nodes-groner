@@ -12,7 +12,7 @@ import { getTaskStatuses } from './loadOptions/getTaskStatuses.js';
 import { getContactProperties } from './loadOptions/getContactProperties.js';
 import { getDealProperties } from './loadOptions/getDealProperties.js';
 
-// Imports consolidados
+// Consolidated imports
 import { createDealFields } from './operations/CreateDeal/CreateDeal.fields';
 import { executeCreateDeal } from './operations/CreateDeal/CreateDeal.operation';
 import { createDealDeclaration } from './operations/CreateDeal/CreateDeal.declaration';
@@ -47,7 +47,7 @@ import { searchTasksFields } from './operations/SearchTasks/SearchTasks.fields';
 import { executeSearchTasks } from './operations/SearchTasks/SearchTasks.operation';
 import { searchTasksDeclaration } from './operations/SearchTasks/SearchTasks.declaration';
 
-// Tipos
+// Types
 type OperationKey =
   | 'criarNegocio' | 'pesquisarNegocios' | 'adicionarEtiquetas' | 'adicionarNota' | 'adicionarTarefa'
   | 'editarContatoPorPropriedade' | 'editarNegocioPorPropriedade' | 'enviarMensagemWhatsApp'
@@ -55,7 +55,7 @@ type OperationKey =
 
 type OperationExecutor = (this: IExecuteFunctions, itemIndex: number, items: INodeExecutionData[], credentials: any) => Promise<any>;
 
-// Configuração consolidada
+// Consolidated configuration
 const CONFIG = {
   node: {
     displayName: 'Groner',
@@ -103,7 +103,7 @@ export class Groner implements INodeType {
     description: CONFIG.node.description,
     icon: CONFIG.node.icon,
     defaults: { name: CONFIG.node.displayName },
-    inputs: ['main' as NodeConnectionType],
+    inputs: ['main'] as NodeConnectionType[],
     outputs: ['main' as NodeConnectionType],
     credentials: [{ name: CONFIG.node.credentials, required: true }],
     properties: [

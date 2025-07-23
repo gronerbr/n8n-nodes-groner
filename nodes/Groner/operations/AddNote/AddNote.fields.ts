@@ -8,7 +8,6 @@ export const addNoteFields: INodeProperties[] = [
     required: true,
     default: '',
     displayOptions: { show: { operation: ['adicionarNota'] } },
-    description: 'ID do negócio',
   },
   {
     displayName: 'Occurrence',
@@ -17,7 +16,7 @@ export const addNoteFields: INodeProperties[] = [
     required: true,
     default: '',
     displayOptions: { show: { operation: ['adicionarNota'] } },
-    description: 'Texto da ocorrência/nota',
+    description: 'Occurrence/note text',
   },
   {
     displayName: 'Mentions',
@@ -25,6 +24,6 @@ export const addNoteFields: INodeProperties[] = [
     type: 'string',
     default: '',
     displayOptions: { show: { operation: ['adicionarNota'] } },
-    description: 'Menções/etiquetas',
+    description: 'Mentions/tags',
   },
 ];

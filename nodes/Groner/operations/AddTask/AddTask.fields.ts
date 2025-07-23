@@ -8,7 +8,7 @@ export const addTaskFields: INodeProperties[] = [
     required: true,
     default: '',
     displayOptions: { show: { operation: ['adicionarTarefa'] } },
-    description: 'Título da tarefa',
+    description: 'Task title',
   },
   {
     displayName: 'Description',
@@ -16,7 +16,7 @@ export const addTaskFields: INodeProperties[] = [
     type: 'string',
     default: '',
     displayOptions: { show: { operation: ['adicionarTarefa'] } },
-    description: 'Descrição da tarefa',
+    description: 'Task description',
   },
   {
     displayName: 'Start Date',
@@ -25,7 +25,7 @@ export const addTaskFields: INodeProperties[] = [
     default: '',
     placeholder: '2024-01-01',
     displayOptions: { show: { operation: ['adicionarTarefa'] } },
-    description: 'Data inicial (YYYY-MM-DD)',
+    description: 'Start date (YYYY-MM-DD)',
   },
   {
     displayName: 'Delivery Date',
@@ -34,7 +34,7 @@ export const addTaskFields: INodeProperties[] = [
     default: '',
     placeholder: '2024-12-31',
     displayOptions: { show: { operation: ['adicionarTarefa'] } },
-    description: 'Data de entrega (YYYY-MM-DD)',
+    description: 'Delivery date (YYYY-MM-DD)',
   },
   {
     displayName: 'Deal ID',
@@ -43,7 +43,6 @@ export const addTaskFields: INodeProperties[] = [
     required: true,
     default: '',
     displayOptions: { show: { operation: ['adicionarTarefa'] } },
-    description: 'ID do Negócio',
   },
   {
     displayName: 'Status Name or ID',
@@ -55,7 +54,7 @@ export const addTaskFields: INodeProperties[] = [
     required: true,
     default: '',
     displayOptions: { show: { operation: ['adicionarTarefa'] } },
-    description: 'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code-examples/expressions/">expression</a>',
+    description: 'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code-examples/expressions/">expression</a>. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
   },
   {
     displayName: 'Type Name or ID',
@@ -67,7 +66,7 @@ export const addTaskFields: INodeProperties[] = [
     required: true,
     default: '',
     displayOptions: { show: { operation: ['adicionarTarefa'] } },
-    description: 'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code-examples/expressions/">expression</a>',
+    description: 'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code-examples/expressions/">expression</a>. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
   },
   {
     displayName: 'User Names or IDs',
@@ -79,6 +78,6 @@ export const addTaskFields: INodeProperties[] = [
     required: true,
     default: [],
     displayOptions: { show: { operation: ['adicionarTarefa'] } },
-    description: 'Choose from the list, or specify IDs using an <a href="https://docs.n8n.io/code-examples/expressions/">expression</a>',
+    description: 'Choose from the list, or specify IDs using an <a href="https://docs.n8n.io/code-examples/expressions/">expression</a>. Choose from the list, or specify IDs using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
   },
 ];

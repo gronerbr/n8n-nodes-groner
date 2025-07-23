@@ -15,7 +15,7 @@ export const searchTasksFields: INodeProperties[] = [
     type: 'string',
     default: '',
     displayOptions: { show: { operation: ['pesquisarTarefas'] } },
-    description: 'Termo de pesquisa',
+    description: 'Search term',
   },
   {
     displayName: 'Type Name or ID',
@@ -26,7 +26,7 @@ export const searchTasksFields: INodeProperties[] = [
     },
     default: '',
     displayOptions: { show: { operation: ['pesquisarTarefas'] } },
-    description: 'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code-examples/expressions/">expression</a>',
+    description: 'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code-examples/expressions/">expression</a>. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
   },
   {
     displayName: 'Status Name or ID',
@@ -37,7 +37,7 @@ export const searchTasksFields: INodeProperties[] = [
     },
     default: '',
     displayOptions: { show: { operation: ['pesquisarTarefas'] } },
-    description: 'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code-examples/expressions/">expression</a>',
+    description: 'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code-examples/expressions/">expression</a>. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
   },
   {
     displayName: 'User Name or ID',
@@ -48,7 +48,7 @@ export const searchTasksFields: INodeProperties[] = [
     },
     default: '',
     displayOptions: { show: { operation: ['pesquisarTarefas'] } },
-    description: 'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code-examples/expressions/">expression</a>',
+    description: 'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code-examples/expressions/">expression</a>. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
   },
   {
     displayName: 'Lead ID',
@@ -56,7 +56,6 @@ export const searchTasksFields: INodeProperties[] = [
     type: 'number',
     default: '',
     displayOptions: { show: { operation: ['pesquisarTarefas'] } },
-    description: 'ID do lead',
   },
   {
     displayName: 'Project ID',
@@ -64,7 +63,6 @@ export const searchTasksFields: INodeProperties[] = [
     type: 'number',
     default: '',
     displayOptions: { show: { operation: ['pesquisarTarefas'] } },
-    description: 'ID do projeto',
   },
   {
     displayName: 'Store Names or IDs',
@@ -75,7 +73,7 @@ export const searchTasksFields: INodeProperties[] = [
     },
     default: [],
     displayOptions: { show: { operation: ['pesquisarTarefas'] } },
-    description: 'Choose from the list, or specify IDs using an <a href="https://docs.n8n.io/code-examples/expressions/">expression</a>',
+    description: 'Choose from the list, or specify IDs using an <a href="https://docs.n8n.io/code-examples/expressions/">expression</a>. Choose from the list, or specify IDs using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
   },
   {
     displayName: 'Start Date',
@@ -84,7 +82,7 @@ export const searchTasksFields: INodeProperties[] = [
     default: '',
     placeholder: '2024-01-01',
     displayOptions: { show: { operation: ['pesquisarTarefas'] } },
-    description: 'Data inicial (YYYY-MM-DD)',
+    description: 'Start date (YYYY-MM-DD)',
   },
   {
     displayName: 'End Date',
@@ -93,7 +91,7 @@ export const searchTasksFields: INodeProperties[] = [
     default: '',
     placeholder: '2024-12-31',
     displayOptions: { show: { operation: ['pesquisarTarefas'] } },
-    description: 'Data final (YYYY-MM-DD)',
+    description: 'End date (YYYY-MM-DD)',
   },
   {
     displayName: 'Sort By',
@@ -101,6 +99,6 @@ export const searchTasksFields: INodeProperties[] = [
     type: 'string',
     default: '',
     displayOptions: { show: { operation: ['pesquisarTarefas'] } },
-    description: 'Campo para ordenação',
+    description: 'Field for sorting',
   },
 ];

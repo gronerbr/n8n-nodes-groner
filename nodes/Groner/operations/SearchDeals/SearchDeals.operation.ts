@@ -3,7 +3,7 @@ import type { IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
 export async function executeSearchDeals(this: IExecuteFunctions, i: number, items: INodeExecutionData[], credentials: any): Promise<any> {
 	const qs: Record<string, any> = {};
 
-	// Lista de todos os campos disponíveis
+	// List of all available fields
 	const fields = [
 		'pageSize', 'query', 'criterio', 'tipoProjetoId', 'etapaId', 'statusId',
 		'vendedorResponsavelId', 'tecnicoResponsavelId', 'preVendedorId', 'leadId',
@@ -17,11 +17,11 @@ export async function executeSearchDeals(this: IExecuteFunctions, i: number, ite
 		'campanha', 'anuncio', 'conjuntoAnuncios'
 	];
 
-	// Adiciona apenas campos que têm valor
+	// Add only fields that have values
 	for (const field of fields) {
 		const value = this.getNodeParameter(field, i, '');
 		if (value !== '' && value !== undefined && value !== null && value !== 0) {
-			// Para arrays, converte para string separada por vírgula
+			// For arrays, convert to comma-separated string
 			if (Array.isArray(value)) {
 				if (value.length > 0) {
 					qs[field] = value.join(',');

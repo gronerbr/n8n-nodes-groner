@@ -7,7 +7,6 @@ export const sendWhatsAppFields: INodeProperties[] = [
     type: 'number',
     default: '',
     displayOptions: { show: { operation: ['enviarMensagemWhatsApp'] } },
-    description: 'ID do contato',
   },
   {
     displayName: 'Message',
@@ -16,7 +15,7 @@ export const sendWhatsAppFields: INodeProperties[] = [
     required: true,
     default: '',
     displayOptions: { show: { operation: ['enviarMensagemWhatsApp'] } },
-    description: 'Mensagem a ser enviada',
+    description: 'Message to be sent',
   },
   {
     displayName: 'Phone',
@@ -24,7 +23,7 @@ export const sendWhatsAppFields: INodeProperties[] = [
     type: 'string',
     default: '',
     displayOptions: { show: { operation: ['enviarMensagemWhatsApp'] } },
-    description: 'Número de celular',
+    description: 'Phone number',
   },
   {
     displayName: 'Image URL',
@@ -32,7 +31,6 @@ export const sendWhatsAppFields: INodeProperties[] = [
     type: 'string',
     default: '',
     displayOptions: { show: { operation: ['enviarMensagemWhatsApp'] } },
-    description: 'URL da imagem',
   },
   {
     displayName: 'Audio URL',
@@ -40,7 +38,6 @@ export const sendWhatsAppFields: INodeProperties[] = [
     type: 'string',
     default: '',
     displayOptions: { show: { operation: ['enviarMensagemWhatsApp'] } },
-    description: 'URL do áudio',
   },
   {
     displayName: 'Video URL',
@@ -48,7 +45,6 @@ export const sendWhatsAppFields: INodeProperties[] = [
     type: 'string',
     default: '',
     displayOptions: { show: { operation: ['enviarMensagemWhatsApp'] } },
-    description: 'URL do vídeo',
   },
   {
     displayName: 'Document URL',
@@ -56,7 +52,6 @@ export const sendWhatsAppFields: INodeProperties[] = [
     type: 'string',
     default: '',
     displayOptions: { show: { operation: ['enviarMensagemWhatsApp'] } },
-    description: 'URL do documento',
   },
   {
     displayName: 'Send to Pre-Seller',

@@ -3,13 +3,13 @@ import type { IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
 export async function executeSendWhatsApp(this: IExecuteFunctions, i: number, items: INodeExecutionData[], credentials: any): Promise<any> {
 	const body: Record<string, any> = {};
 
-	// Lista de todos os campos disponíveis
+	// List of all available fields
 	const fields = [
 		'leadId', 'mensagem', 'celular', 'urlImagem', 'urlAudio', 'urlVideo', 'urlDocumento',
 		'preVendedor', 'vendedor', 'tecnico', 'lead'
 	];
 
-	// Adiciona apenas campos que têm valor
+	// Add only fields that have values
 	for (const field of fields) {
 		const value = this.getNodeParameter(field, i, '');
 		if (value !== '' && value !== undefined && value !== null && value !== false) {

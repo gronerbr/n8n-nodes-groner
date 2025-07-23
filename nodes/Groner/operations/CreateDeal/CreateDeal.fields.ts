@@ -8,7 +8,7 @@ export const createDealFields: INodeProperties[] = [
     required: true,
     default: '',
     displayOptions: { show: { operation: ['criarNegocio'] } },
-    description: 'Nome do lead/negócio',
+    description: 'Lead/deal name',
   },
   {
     displayName: 'Email',
@@ -18,7 +18,7 @@ export const createDealFields: INodeProperties[] = [
     default: '',
     placeholder: 'name@email.com',
     displayOptions: { show: { operation: ['criarNegocio'] } },
-    description: 'Email do lead',
+    description: 'Lead email',
   },
   {
     displayName: 'Phone',
@@ -27,7 +27,7 @@ export const createDealFields: INodeProperties[] = [
     required: true,
     default: '',
     displayOptions: { show: { operation: ['criarNegocio'] } },
-    description: 'Telefone do lead',
+    description: 'Lead phone number',
   },
   {
     displayName: 'City',
@@ -35,7 +35,7 @@ export const createDealFields: INodeProperties[] = [
     type: 'string',
     default: '',
     displayOptions: { show: { operation: ['criarNegocio'] } },
-    description: 'Cidade do lead',
+    description: 'Lead city',
   },
   {
     displayName: 'Document',
@@ -43,7 +43,7 @@ export const createDealFields: INodeProperties[] = [
     type: 'string',
     default: '',
     displayOptions: { show: { operation: ['criarNegocio'] } },
-    description: 'CPF/CNPJ do lead',
+    description: 'CPF/CNPJ number',
   },
   {
     displayName: 'Person Type',
@@ -51,7 +51,7 @@ export const createDealFields: INodeProperties[] = [
     type: 'string',
     default: '',
     displayOptions: { show: { operation: ['criarNegocio'] } },
-    description: 'Tipo de pessoa (Física/Jurídica)',
+    description: 'Person type (Individual/Company)',
   },
   {
     displayName: 'State',
@@ -59,7 +59,7 @@ export const createDealFields: INodeProperties[] = [
     type: 'string',
     default: '',
     displayOptions: { show: { operation: ['criarNegocio'] } },
-    description: 'Estado (UF) do lead',
+    description: 'State (UF)',
   },
   {
     displayName: 'Account Value',
@@ -67,7 +67,6 @@ export const createDealFields: INodeProperties[] = [
     type: 'string',
     default: '',
     displayOptions: { show: { operation: ['criarNegocio'] } },
-    description: 'Valor da conta',
   },
   {
     displayName: 'Responsible Name or ID',
@@ -78,7 +77,7 @@ export const createDealFields: INodeProperties[] = [
     },
     default: '',
     displayOptions: { show: { operation: ['criarNegocio'] } },
-    description: 'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code-examples/expressions/">expression</a>',
+    description: 'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code-examples/expressions/">expression</a>. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
   },
   {
     displayName: 'Responsible Email',
@@ -86,7 +85,7 @@ export const createDealFields: INodeProperties[] = [
     type: 'string',
     default: '',
     displayOptions: { show: { operation: ['criarNegocio'] } },
-    description: 'Email do responsável',
+    description: 'Responsible person email',
   },
   {
     displayName: 'Note',
@@ -94,7 +93,7 @@ export const createDealFields: INodeProperties[] = [
     type: 'string',
     default: '',
     displayOptions: { show: { operation: ['criarNegocio'] } },
-    description: 'Observação/nota',
+    description: 'Observation/note',
   },
   {
     displayName: 'Campaign',
@@ -102,7 +101,7 @@ export const createDealFields: INodeProperties[] = [
     type: 'string',
     default: '',
     displayOptions: { show: { operation: ['criarNegocio'] } },
-    description: 'Campanha de origem',
+    description: 'Origin campaign',
   },
   {
     displayName: 'Ad',
@@ -110,7 +109,7 @@ export const createDealFields: INodeProperties[] = [
     type: 'string',
     default: '',
     displayOptions: { show: { operation: ['criarNegocio'] } },
-    description: 'Anúncio de origem',
+    description: 'Origin advertisement',
   },
   {
     displayName: 'Ad Set',
@@ -118,7 +117,6 @@ export const createDealFields: INodeProperties[] = [
     type: 'string',
     default: '',
     displayOptions: { show: { operation: ['criarNegocio'] } },
-    description: 'Conjunto de anúncios',
   },
   {
     displayName: 'Lead Tracking Code',
@@ -126,7 +124,6 @@ export const createDealFields: INodeProperties[] = [
     type: 'string',
     default: '',
     displayOptions: { show: { operation: ['criarNegocio'] } },
-    description: 'Código de tracking do lead',
   },
   {
     displayName: 'Trade Name',
@@ -134,7 +131,6 @@ export const createDealFields: INodeProperties[] = [
     type: 'string',
     default: '',
     displayOptions: { show: { operation: ['criarNegocio'] } },
-    description: 'Nome fantasia',
   },
   {
     displayName: 'Segment',
@@ -142,7 +138,7 @@ export const createDealFields: INodeProperties[] = [
     type: 'string',
     default: '',
     displayOptions: { show: { operation: ['criarNegocio'] } },
-    description: 'Segmento do negócio',
+    description: 'Business segment',
   },
   {
     displayName: 'Deal Type Name or ID',
@@ -153,7 +149,7 @@ export const createDealFields: INodeProperties[] = [
     },
     default: '',
     displayOptions: { show: { operation: ['criarNegocio'] } },
-    description: 'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code-examples/expressions/">expression</a>',
+    description: 'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code-examples/expressions/">expression</a>. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
   },
   {
     displayName: 'Origin Name or ID',
@@ -164,7 +160,7 @@ export const createDealFields: INodeProperties[] = [
     },
     default: '',
     displayOptions: { show: { operation: ['criarNegocio'] } },
-    description: 'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code-examples/expressions/">expression</a>',
+    description: 'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code-examples/expressions/">expression</a>. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
   },
   {
     displayName: 'Custom URL',
@@ -172,6 +168,6 @@ export const createDealFields: INodeProperties[] = [
     type: 'string',
     default: '',
     displayOptions: { show: { operation: ['criarNegocio'] } },
-    description: 'URL customizada (opcional)',
+    description: 'Custom URL (optional)',
   },
 ];

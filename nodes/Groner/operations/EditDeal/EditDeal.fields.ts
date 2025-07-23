@@ -8,7 +8,6 @@ export const editDealFields: INodeProperties[] = [
     required: true,
     default: '',
     displayOptions: { show: { operation: ['editarNegocioPorPropriedade'] } },
-    description: 'ID do negócio',
   },
   {
     displayName: 'Property Name or ID',
@@ -20,7 +19,7 @@ export const editDealFields: INodeProperties[] = [
     required: true,
     default: '',
     displayOptions: { show: { operation: ['editarNegocioPorPropriedade'] } },
-    description: 'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code-examples/expressions/">expression</a>',
+    description: 'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code-examples/expressions/">expression</a>. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
   },
   {
     displayName: 'Value',
@@ -29,6 +28,6 @@ export const editDealFields: INodeProperties[] = [
     required: true,
     default: '',
     displayOptions: { show: { operation: ['editarNegocioPorPropriedade'] } },
-    description: 'Novo valor da propriedade',
+    description: 'New property value',
   },
 ];
