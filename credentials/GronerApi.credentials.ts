@@ -1,8 +1,8 @@
 import {
 	ICredentialType,
 	INodeProperties,
-	ICredentialTestRequest,
 	IAuthenticateGeneric,
+	ICredentialTestRequest,
 } from 'n8n-workflow';
 
 export class GronerApi implements ICredentialType {
@@ -46,5 +46,4 @@ export class GronerApi implements ICredentialType {
 			url: '={{ "https://" + $credentials.tenant + ".api.groner.app/api/conta/minhaconta" }}',
 		},
 	};
-
 }
