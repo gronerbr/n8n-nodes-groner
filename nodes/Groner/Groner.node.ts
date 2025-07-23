@@ -93,84 +93,85 @@ const CONFIG = {
   },
 } as const;
 
-// Declarative style node
-export const description: INodeTypeDescription = {
-  displayName: CONFIG.node.displayName,
-  name: CONFIG.node.name,
-  group: CONFIG.node.group,
-  version: CONFIG.node.version,
-  subtitle: '={{ $parameter["operation"] }}',
-  description: CONFIG.node.description,
-  icon: CONFIG.node.icon,
-  defaults: { name: CONFIG.node.displayName },
-  inputs: ['main'] as NodeConnectionType[],
-  outputs: ['main' as NodeConnectionType],
-  credentials: [{ name: CONFIG.node.credentials, required: true }],
-  properties: [
-    {
-      displayName: 'Operation',
-      name: 'operation',
-      type: 'options',
-      noDataExpression: true,
-      options: CONFIG.operations.declarations.map(d => ({
-        name: d.label,
-        value: d.operation,
-        description: d.description,
-      })),
-      default: '',
-    },
-    ...CONFIG.operations.fields,
-  ],
-};
+export class Groner {
+  description: INodeTypeDescription = {
+    displayName: CONFIG.node.displayName,
+    name: CONFIG.node.name,
+    group: CONFIG.node.group,
+    version: CONFIG.node.version,
+    subtitle: '={{ $parameter["operation"] }}',
+    description: CONFIG.node.description,
+    icon: CONFIG.node.icon,
+    defaults: { name: CONFIG.node.displayName },
+    inputs: ['main'] as NodeConnectionType[],
+    outputs: ['main' as NodeConnectionType],
+    credentials: [{ name: CONFIG.node.credentials, required: true }],
+    properties: [
+      {
+        displayName: 'Operation',
+        name: 'operation',
+        type: 'options',
+        noDataExpression: true,
+        options: CONFIG.operations.declarations.map(d => ({
+          name: d.label,
+          value: d.operation,
+          description: d.description,
+        })),
+        default: '',
+      },
+      ...CONFIG.operations.fields,
+    ],
+  };
 
-export const methods = {
-  loadOptions: {
-    getStatuses,
-    getOrigins,
-    getResponsibles,
-    getDealTypes,
-    getTags,
-    getStores,
-    getEtapas,
-    getTaskTypes,
-    getTaskStatuses,
-    getContactProperties,
-    getDealProperties,
-  }
-};
+  methods = {
+    loadOptions: {
+      getStatuses,
+      getOrigins,
+      getResponsibles,
+      getDealTypes,
+      getTags,
+      getStores,
+      getEtapas,
+      getTaskTypes,
+      getTaskStatuses,
+      getContactProperties,
+      getDealProperties,
+    }
+  };
 
-export async function execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
-  const operation = this.getNodeParameter('operation', 0) as OperationKey;
-  const items = this.getInputData();
-  const returnData: INodeExecutionData[] = [];
+  async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
+    const operation = this.getNodeParameter('operation', 0) as OperationKey;
+    const items = this.getInputData();
+    const returnData: INodeExecutionData[] = [];
 
-  if (!CONFIG.operations.executors.has(operation)) {
-    throw new NodeOperationError(
-      this.getNode(),
-      `Unsupported operation: ${operation}. Available: ${Array.from(CONFIG.operations.executors.keys()).join(', ')}`
-    );
-  }
+    if (!CONFIG.operations.executors.has(operation)) {
+      throw new NodeOperationError(
+        this.getNode(),
+        `Unsupported operation: ${operation}. Available: ${Array.from(CONFIG.operations.executors.keys()).join(', ')}`
+      );
+    }
 
-  for (let i = 0; i < items.length; i++) {
-    try {
-      const credentials = await this.getCredentials(CONFIG.node.credentials);
-      const responseData = await CONFIG.operations.executors.get(operation)!.call(this, i, items, credentials);
+    for (let i = 0; i < items.length; i++) {
+      try {
+        const credentials = await this.getCredentials(CONFIG.node.credentials);
+        const responseData = await CONFIG.operations.executors.get(operation)!.call(this, i, items, credentials);
 
-      returnData.push(...this.helpers.constructExecutionMetaData(
-        this.helpers.returnJsonArray(responseData),
-        { itemData: { item: i } },
-      ));
-    } catch (error) {
-      if (this.continueOnFail()) {
         returnData.push(...this.helpers.constructExecutionMetaData(
-          this.helpers.returnJsonArray({ error: error.message }),
+          this.helpers.returnJsonArray(responseData),
           { itemData: { item: i } },
         ));
-        continue;
+      } catch (error) {
+        if (this.continueOnFail()) {
+          returnData.push(...this.helpers.constructExecutionMetaData(
+            this.helpers.returnJsonArray({ error: error.message }),
+            { itemData: { item: i } },
+          ));
+          continue;
+        }
+        throw error;
       }
-      throw error;
     }
-  }
 
-  return [returnData];
+    return [returnData];
+  }
 }
