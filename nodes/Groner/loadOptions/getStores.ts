@@ -1,9 +1,9 @@
 import type { ILoadOptionsFunctions } from 'n8n-workflow';
 
-export async function getStatuses(this: ILoadOptionsFunctions) {
+export async function getStores(this: ILoadOptionsFunctions) {
 	const credentials = await this.getCredentials('gronerApi');
 	const tenant = credentials.tenant;
-	const url = `https://${tenant}.api.groner.app/api/statusProjeto`;
+	const url = `https://${tenant}.api.groner.app/api/loja`;
 
 	const options = {
 		method: 'GET' as const,
@@ -12,8 +12,8 @@ export async function getStatuses(this: ILoadOptionsFunctions) {
 			'Content-Type': 'application/json',
 		},
 		qs: {
-			pageSize: 500,
 			query: '',
+			pageSize: 500,
 		},
 		json: true,
 	};

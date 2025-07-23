@@ -14,8 +14,9 @@ export class GronerApi implements ICredentialType {
 			name: 'tenant',
 			type: 'string',
 			default: '',
-			placeholder: 'exemplo-empresa',
-			description: 'Your Groner subdomain (tenant)',
+			placeholder: 'comercial',
+			description: 'Seu tenant do Groner (ex: comercial, minhaempresa)',
+			required: true,
 		},
 		{
 			displayName: 'API Key',
@@ -25,7 +26,8 @@ export class GronerApi implements ICredentialType {
 				password: true,
 			},
 			default: '',
-			description: 'Your Groner API key',
+			description: 'Sua chave de API do Groner (JWT token)',
+			required: true,
 		},
 	];
 
@@ -33,7 +35,7 @@ export class GronerApi implements ICredentialType {
 		type: 'generic',
 		properties: {
 			headers: {
-				Authorization: 'Bearer {{ $credentials.apiKey }}',
+				Authorization: '={{ "Bearer " + $credentials.apiKey }}',
 			},
 		},
 	};
@@ -42,11 +44,7 @@ export class GronerApi implements ICredentialType {
 		request: {
 			method: 'GET',
 			url: '={{ "https://" + $credentials.tenant + ".api.groner.app/api/conta/minhaconta" }}',
-			headers: {
-				Authorization: 'Bearer {{ $credentials.apiKey }}',
-			},
 		},
 	};
 
-	// credentialLabel: '={{ $response.body.email }}', // Descomente se sua versão do n8n suportar
 }
