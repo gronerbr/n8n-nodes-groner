@@ -445,6 +445,7 @@ export class Groner implements INodeType {
         name: 'codOrigem',
         type: 'options',
         typeOptions: { loadOptionsMethod: 'getOrigins' },
+        required: true,
         default: '',
         displayOptions: { show: { resource: ['deal'], operation: ['create'] } },
         description: 'Lead origin. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
@@ -468,6 +469,7 @@ export class Groner implements INodeType {
             placeholder: '0.00',
             description: 'Estimated deal value',
           },
+
           {
             displayName: 'Anuncio',
             name: 'anuncio',
@@ -508,14 +510,7 @@ export class Groner implements INodeType {
             placeholder: 'Ad Set 1',
             description: 'Ad set for campaign',
           },
-          {
-            displayName: 'Deal Properties Name or ID',
-            name: 'dealProperties',
-            type: 'options',
-            typeOptions: { loadOptionsMethod: 'getDealProperties' },
-            default: '',
-            description: 'Additional deal properties. Choose from the list, or specify a property using an <a href="https://docs.n8n.io/code/expressions/">expression</a>. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
-          },
+
           {
             displayName: 'Documento (CPF Ou CNPJ)',
             name: 'documento',
