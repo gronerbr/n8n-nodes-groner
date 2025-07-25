@@ -8,6 +8,7 @@ import {
 export class GronerApi implements ICredentialType {
 	name = 'gronerApi';
 	displayName = 'Groner API';
+	documentationUrl = 'https://groner.app/docs/api';
 	properties: INodeProperties[] = [
 		{
 			displayName: 'Subdomain (Referencia)',

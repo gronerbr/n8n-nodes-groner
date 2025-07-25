@@ -48,7 +48,7 @@ export class Groner implements INodeType {
           { name: t('Task', 'Tarefa'), value: 'task' },
           { name: t('WhatsApp', 'WhatsApp'), value: 'whatsapp' },
         ],
-        default: 'deal',
+        default: undefined,
       },
 
       // Operation selector for Deals
@@ -234,7 +234,7 @@ export class Groner implements INodeType {
             },
           },
         ],
-        default: 'search',
+        default: undefined,
       },
 
       // Operation selector for Contacts
@@ -283,7 +283,7 @@ export class Groner implements INodeType {
             },
           },
         ],
-        default: 'edit',
+        default: undefined,
       },
 
       // Operation selector for Tasks
@@ -351,7 +351,7 @@ export class Groner implements INodeType {
             },
           },
         ],
-        default: 'create',
+        default: undefined,
       },
 
       // Operation selector for Notes
@@ -379,7 +379,7 @@ export class Groner implements INodeType {
             },
           },
         ],
-        default: 'add',
+        default: undefined,
       },
 
       // Operation selector for Tags
@@ -404,7 +404,7 @@ export class Groner implements INodeType {
             },
           },
         ],
-        default: 'add',
+        default: undefined,
       },
 
       // Operation selector for WhatsApp
@@ -441,7 +441,7 @@ export class Groner implements INodeType {
             },
           },
         ],
-        default: 'send',
+        default: undefined,
       },
 
       // ===== CAMPOS PARA CREATE DEAL =====
@@ -455,7 +455,7 @@ export class Groner implements INodeType {
         description: 'Lead/deal name',
       },
       {
-        displayName: 'Endereço de Email',
+        displayName: 'Endereço De Email',
         name: 'email',
         type: 'string',
         required: true,
@@ -475,11 +475,10 @@ export class Groner implements INodeType {
         description: 'Lead phone number',
       },
       {
-        displayName: 'Código de Origem',
+        displayName: 'Código De Origem Name or ID',
         name: 'codOrigem',
         type: 'options',
         typeOptions: { loadOptionsMethod: 'getOrigins' },
-        required: false,
         default: '',
         displayOptions: { show: { resource: ['deal'], operation: ['create'] } },
         description: 'Lead origin. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
@@ -519,7 +518,7 @@ export class Groner implements INodeType {
             description: 'Lead city',
           },
           {
-            displayName: 'Codigo de Lead Tracking',
+            displayName: 'Codigo De Lead Tracking',
             name: 'codigoLeadTracking',
             type: 'string',
             default: '',
@@ -527,7 +526,7 @@ export class Groner implements INodeType {
             description: 'Tracking code for the lead',
           },
           {
-            displayName: 'Conjunto de Anuncios',
+            displayName: 'Conjunto De Anuncios',
             name: 'conjuntoAnuncios',
             type: 'string',
             default: '',
@@ -535,7 +534,15 @@ export class Groner implements INodeType {
             description: 'Ad set for campaign',
           },
           {
-            displayName: 'Documento (CPF ou CNPJ)',
+            displayName: 'Deal Properties Name or ID',
+            name: 'dealProperties',
+            type: 'options',
+            typeOptions: { loadOptionsMethod: 'getDealProperties' },
+            default: '',
+            description: 'Additional deal properties. Choose from the list, or specify a property using an <a href="https://docs.n8n.io/code/expressions/">expression</a>. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+          },
+          {
+            displayName: 'Documento (CPF Ou CNPJ)',
             name: 'documento',
             type: 'string',
             default: '',
@@ -543,7 +550,7 @@ export class Groner implements INodeType {
             description: 'CPF/CNPJ number',
           },
           {
-            displayName: 'Email do Responsavel',
+            displayName: 'Email Do Responsavel',
             name: 'emailResponsavel',
             type: 'string',
             default: '',
@@ -551,7 +558,7 @@ export class Groner implements INodeType {
             description: 'Responsible person email',
           },
           {
-            displayName: 'ID do Responsavel',
+            displayName: 'ID Do Responsavel Name or ID',
             name: 'responsavelId',
             type: 'options',
             typeOptions: { loadOptionsMethod: 'getResponsibles' },
@@ -584,7 +591,7 @@ export class Groner implements INodeType {
             description: 'Business segment',
           },
           {
-            displayName: 'Tipo de Negocio',
+            displayName: 'Tipo De Negocio Name or ID',
             name: 'tipoProjetoId',
             type: 'options',
             typeOptions: { loadOptionsMethod: 'getDealTypes' },
@@ -592,7 +599,7 @@ export class Groner implements INodeType {
             description: 'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
           },
           {
-            displayName: 'Tipo de Pessoa (PF ou PJ)',
+            displayName: 'Tipo De Pessoa (PF Ou PJ)',
             name: 'tipoPessoa',
             type: 'options',
             options: [
@@ -600,6 +607,14 @@ export class Groner implements INodeType {
               { name: 'Company', value: 'J' },
             ],
             default: 'F',
+          },
+          {
+            displayName: 'Trade Name',
+            name: 'tradeName',
+            type: 'string',
+            default: '',
+            placeholder: 'Company Trade Name',
+            description: 'Trade name of the company',
           },
           {
             displayName: 'UF',
@@ -615,10 +630,9 @@ export class Groner implements INodeType {
             type: 'string',
             default: '',
             placeholder: 'https://example.com',
-            description: 'URL',
           },
           {
-            displayName: 'Valor da Conta',
+            displayName: 'Valor Da Conta',
             name: 'valorConta',
             type: 'number',
             typeOptions: { minValue: 0, numberPrecision: 2 },
@@ -626,22 +640,6 @@ export class Groner implements INodeType {
             placeholder: '0.00',
             description: 'Estimated deal value',
           },
-                      {
-              displayName: 'Trade Name',
-              name: 'tradeName',
-              type: 'string',
-              default: '',
-              placeholder: 'Company Trade Name',
-              description: 'Trade name of the company',
-            },
-            {
-              displayName: 'Deal Properties',
-              name: 'dealProperties',
-              type: 'options',
-              typeOptions: { loadOptionsMethod: 'getDealProperties' },
-              default: '',
-              description: 'Additional deal properties. Choose from the list, or specify a property using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
-            },
           ],
         },
 
@@ -1017,7 +1015,7 @@ export class Groner implements INodeType {
 
       // ===== CAMPOS PARA ADD NOTE =====
       {
-        displayName: 'Negocio Id',
+        displayName: 'Negocio ID',
         name: 'dealId',
         type: 'number',
         typeOptions: { minValue: 1 },
@@ -1124,12 +1122,12 @@ export class Groner implements INodeType {
             description: 'Contact city',
           },
           {
-            displayName: 'State',
-            name: 'state',
-            type: 'string',
+            displayName: 'Contact Properties Name or ID',
+            name: 'contactProperties',
+            type: 'options',
+            typeOptions: { loadOptionsMethod: 'getContactProperties' },
             default: '',
-            placeholder: 'SP',
-            description: 'Contact state (UF)',
+            description: 'Additional contact properties. Choose from the list, or specify a property using an <a href="https://docs.n8n.io/code/expressions/">expression</a>. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
           },
           {
             displayName: 'Document',
@@ -1139,25 +1137,25 @@ export class Groner implements INodeType {
             placeholder: '123.456.789-00',
             description: 'CPF/CNPJ number',
           },
-                      {
-              displayName: 'Person Type',
-              name: 'personType',
-              type: 'options',
-              options: [
-                { name: 'Individual', value: 'F' },
-                { name: 'Company', value: 'J' },
-              ],
-              default: 'F',
-              description: 'Type of person (Individual or Company)',
-            },
-            {
-              displayName: 'Contact Properties',
-              name: 'contactProperties',
-              type: 'options',
-              typeOptions: { loadOptionsMethod: 'getContactProperties' },
-              default: '',
-              description: 'Additional contact properties. Choose from the list, or specify a property using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
-            },
+          {
+            displayName: 'Person Type',
+            name: 'personType',
+            type: 'options',
+            options: [
+              { name: 'Individual', value: 'F' },
+              { name: 'Company', value: 'J' },
+            ],
+            default: 'F',
+            description: 'Type of person (Individual or Company)',
+          },
+          {
+            displayName: 'State',
+            name: 'state',
+            type: 'string',
+            default: '',
+            placeholder: 'SP',
+            description: 'Contact state (UF)',
+          },
           ],
         },
 
@@ -1342,7 +1340,7 @@ export class Groner implements INodeType {
 
       // ===== CAMPOS PARA ADD TAGS =====
       {
-        displayName: 'Negocio Id',
+        displayName: 'Negocio ID',
         name: 'dealId',
         type: 'number',
         typeOptions: { minValue: 1 },
@@ -1353,7 +1351,7 @@ export class Groner implements INodeType {
         description: 'The deal ID to add tags to',
       },
       {
-        displayName: 'Etiquetas',
+        displayName: 'Etiquetas Name or ID',
         name: 'tagIds',
         type: 'options',
         typeOptions: { loadOptionsMethod: 'getTags' },
@@ -1365,7 +1363,7 @@ export class Groner implements INodeType {
 
       // ===== CAMPOS PARA SEND WHATSAPP =====
       {
-        displayName: 'Contato Id',
+        displayName: 'Contato ID',
         name: 'leadId',
         type: 'number',
         typeOptions: { minValue: 1 },
@@ -1396,7 +1394,7 @@ export class Groner implements INodeType {
         description: 'Direct phone number',
       },
       {
-        displayName: 'Url da Imagem',
+        displayName: 'Url Da Imagem',
         name: 'urlImagem',
         type: 'string',
         default: '',
@@ -1405,7 +1403,7 @@ export class Groner implements INodeType {
         description: 'Image attachment URL',
       },
       {
-        displayName: 'Url do Audio',
+        displayName: 'Url Do Audio',
         name: 'urlAudio',
         type: 'string',
         default: '',
@@ -1414,7 +1412,7 @@ export class Groner implements INodeType {
         description: 'Audio attachment URL',
       },
       {
-        displayName: 'Url do Video',
+        displayName: 'Url Do Video',
         name: 'urlVideo',
         type: 'string',
         default: '',
@@ -1423,7 +1421,7 @@ export class Groner implements INodeType {
         description: 'Video attachment URL',
       },
       {
-        displayName: 'Url do Documento',
+        displayName: 'Url Do Documento',
         name: 'urlDocumento',
         type: 'string',
         default: '',
@@ -1448,7 +1446,7 @@ export class Groner implements INodeType {
         description: 'Whether to send to Seller',
       },
       {
-        displayName: 'Enviar para Técnico',
+        displayName: 'Enviar Para Técnico',
         name: 'tecnico',
         type: 'boolean',
         default: false,
@@ -1456,7 +1454,7 @@ export class Groner implements INodeType {
         description: 'Whether to send to Technician',
       },
       {
-        displayName: 'Enviar para Lead',
+        displayName: 'Enviar Para Lead',
         name: 'lead',
         type: 'boolean',
         default: false,
