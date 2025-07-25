@@ -351,7 +351,7 @@ export class Groner implements INodeType {
             },
           },
         ],
-        default: undefined,
+        default: 'create',
       },
 
       // Operation selector for Notes
