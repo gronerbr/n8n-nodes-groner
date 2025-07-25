@@ -443,7 +443,7 @@ export class Groner implements INodeType {
 
       // ===== CAMPOS PARA CREATE DEAL =====
       {
-        displayName: 'Nome',
+        displayName: 'Name',
         name: 'nome',
         type: 'string',
         required: true,
@@ -452,7 +452,7 @@ export class Groner implements INodeType {
         description: 'Lead/deal name',
       },
       {
-        displayName: 'Endereço De Email',
+        displayName: 'Email Address',
         name: 'email',
         type: 'string',
         required: true,
@@ -462,7 +462,7 @@ export class Groner implements INodeType {
         description: 'Lead email address',
       },
       {
-        displayName: 'Telefone',
+        displayName: 'Phone',
         name: 'telefone',
         type: 'string',
         required: true,
@@ -472,7 +472,7 @@ export class Groner implements INodeType {
         description: 'Lead phone number',
       },
       {
-        displayName: 'Código De Origem Name or ID',
+        displayName: 'Origin Name or ID',
         name: 'codOrigem',
         type: 'options',
         typeOptions: { loadOptionsMethod: 'getOrigins' },
@@ -490,6 +490,15 @@ export class Groner implements INodeType {
         default: {},
         displayOptions: { show: { resource: ['deal'], operation: ['create', 'edit'] } },
         options: [
+          {
+            displayName: 'Account Value',
+            name: 'valorConta',
+            type: 'number',
+            typeOptions: { minValue: 0, numberPrecision: 2 },
+            default: 0,
+            placeholder: '0.00',
+            description: 'Estimated deal value',
+          },
           {
             displayName: 'Anuncio',
             name: 'anuncio',
@@ -563,15 +572,7 @@ export class Groner implements INodeType {
             description: 'Responsible person. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
           },
           {
-            displayName: 'Nome Fantasia',
-            name: 'nomeFantasia',
-            type: 'string',
-            default: '',
-            placeholder: 'Company Name',
-            description: 'Trade name',
-          },
-          {
-            displayName: 'Nota',
+            displayName: 'Note',
             name: 'nota',
             type: 'string',
             typeOptions: { rows: 3 },
@@ -607,11 +608,10 @@ export class Groner implements INodeType {
           },
           {
             displayName: 'Trade Name',
-            name: 'tradeName',
+            name: 'nomeFantasia',
             type: 'string',
             default: '',
-            placeholder: 'Company Trade Name',
-            description: 'Trade name of the company',
+            placeholder: 'Company Name',
           },
           {
             displayName: 'UF',
@@ -627,15 +627,6 @@ export class Groner implements INodeType {
             type: 'string',
             default: '',
             placeholder: 'https://example.com',
-          },
-          {
-            displayName: 'Valor Da Conta',
-            name: 'valorConta',
-            type: 'number',
-            typeOptions: { minValue: 0, numberPrecision: 2 },
-            default: 0,
-            placeholder: '0.00',
-            description: 'Estimated deal value',
           },
           ],
         },
@@ -1240,7 +1231,7 @@ export class Groner implements INodeType {
         description: 'Task description',
       },
       {
-        displayName: 'Data Inicial',
+        displayName: 'Start Date',
         name: 'dataInicial',
         type: 'string',
         default: '',
@@ -1248,15 +1239,14 @@ export class Groner implements INodeType {
         description: 'Initial date',
       },
       {
-        displayName: 'Data Entrega',
+        displayName: 'Delivery Date',
         name: 'dataEntrega',
         type: 'string',
         default: '',
         displayOptions: { show: { resource: ['task'], operation: ['create'] } },
-        description: 'Delivery date',
       },
       {
-        displayName: 'Projeto ID',
+        displayName: 'Project ID',
         name: 'projetoId',
         type: 'number',
         required: true,

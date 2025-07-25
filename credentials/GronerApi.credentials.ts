@@ -11,12 +11,12 @@ export class GronerApi implements ICredentialType {
 	documentationUrl = 'https://docs.groner.app';
 	properties: INodeProperties[] = [
 		{
-			displayName: 'Subdomain (Referencia)',
+			displayName: 'Subdomain',
 			name: 'tenant',
 			type: 'string',
 			default: '',
 			placeholder: 'comercial',
-			description: 'Seu subdomínio do Groner (ex: comercial, minhaempresa)',
+			description: 'Your Groner subdomain (e.g., comercial, minhaempresa)',
 			required: true,
 		},
 		{
@@ -27,7 +27,7 @@ export class GronerApi implements ICredentialType {
 				password: true,
 			},
 			default: '',
-			description: 'Sua chave de API do Groner (JWT token)',
+			description: 'Your Groner API key (JWT token)',
 			required: true,
 		},
 	];
