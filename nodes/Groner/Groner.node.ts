@@ -1,5 +1,5 @@
 /* eslint-disable n8n-nodes-base/node-filename-against-convention */
-import { INodeType, INodeTypeDescription } from 'n8n-workflow';
+import { INodeType, INodeTypeDescription, NodeConnectionType  } from 'n8n-workflow';
 import { getStatuses } from './loadOptions/getStatuses.js';
 import { getOrigins } from './loadOptions/getOrigins.js';
 import { getResponsibles } from './loadOptions/getResponsibles.js';
@@ -27,8 +27,8 @@ export class Groner implements INodeType {
     subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
     description: t('Integrate with Groner CRM to manage deals, contacts, tasks, and more', 'Integrar com o Groner CRM para gerenciar negócios, contatos, tarefas e mais'),
     defaults: { name: 'Groner' },
-    inputs: ['main' as any],
-    outputs: ['main' as any],
+    inputs: [NodeConnectionType.Main],
+		outputs: [NodeConnectionType.Main],
     credentials: [{ name: 'gronerApi', required: true }],
     requestDefaults: {
       baseURL: '={{ "https://" + $credentials.tenant + ".api.groner.app" }}',
