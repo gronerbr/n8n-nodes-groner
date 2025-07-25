@@ -166,7 +166,7 @@ export class Groner implements INodeType {
                 method: 'POST',
                 url: '=/api/projeto/adicionarStatus/{{$parameter["dealId"]}}?validaStatusDisponivel={{$parameter["validaStatusDisponivel"]}}',
                 body: {
-                  statusId: '={{$parameter["filters"]["statusId"]}}',
+                  statusId: '={{$parameter["statusId"]}}',
                 },
               },
             },
@@ -1046,14 +1046,14 @@ export class Groner implements INodeType {
         description: 'The deal to move',
       },
       {
-        displayName: 'Stage Name or ID',
-        name: 'stageId',
+        displayName: 'Status Name or ID',
+        name: 'statusId',
         type: 'options',
-        typeOptions: { loadOptionsMethod: 'getEtapas' },
+        typeOptions: { loadOptionsMethod: 'getStatuses' },
         required: true,
         default: '',
         displayOptions: { show: { resource: ['deal'], operation: ['move'] } },
-        description: 'The stage to move the deal to. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+        description: 'The status to move the deal to. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
       },
 
       // ===== CAMPOS PARA GET QUOTE =====

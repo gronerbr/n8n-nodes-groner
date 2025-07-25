@@ -1,0 +1,197 @@
+{
+  "name": "Processar Deals com Content.List",
+  "nodes": [
+    {
+      "parameters": {
+        "resource": "deal",
+        "operation": "search",
+        "pageSize": 20,
+        "query": "",
+        "criterio": "nome"
+      },
+      "id": "groner-search",
+      "name": "Groner: Search Deals",
+      "type": "n8n-nodes-groner.groner",
+      "typeVersion": 1,
+      "position": [240, 300],
+      "credentials": {
+        "gronerApi": {
+          "id": "your-credential-id",
+          "name": "Groner API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputData": "={{ $json.data }}",
+        "outputFieldName": "deal"
+      },
+      "id": "content-list",
+      "name": "Content.List",
+      "type": "n8n-nodes-base.contentList",
+      "typeVersion": 1,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "condition-1",
+              "leftValue": "={{ $json.deal.value }}",
+              "rightValue": 1000,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-condition",
+      "name": "IF",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "resource": "deal",
+        "operation": "edit",
+        "dealId": "={{ $json.deal.id }}",
+        "additionalFields": {
+          "note": "Deal de alto valor processado em {{ $now }}"
+        }
+      },
+      "id": "groner-edit",
+      "name": "Groner: Edit Deal",
+      "type": "n8n-nodes-groner.groner",
+      "typeVersion": 1,
+      "position": [900, 200],
+      "credentials": {
+        "gronerApi": {
+          "id": "your-credential-id",
+          "name": "Groner API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "deal",
+        "operation": "addTag",
+        "dealId": "={{ $json.deal.id }}",
+        "tagName": "Alto Valor"
+      },
+      "id": "groner-add-tag",
+      "name": "Groner: Add Tag",
+      "type": "n8n-nodes-groner.groner",
+      "typeVersion": 1,
+      "position": [1120, 200],
+      "credentials": {
+        "gronerApi": {
+          "id": "your-credential-id",
+          "name": "Groner API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fields": {
+          "values": [
+            {
+              "name": "processed",
+              "value": "Deal {{ $json.deal.id }} processado com sucesso"
+            },
+            {
+              "name": "timestamp",
+              "value": "={{ $now }}"
+            },
+            {
+              "name": "dealValue",
+              "value": "={{ $json.deal.value }}"
+            }
+          ]
+        }
+      },
+      "id": "set-fields",
+      "name": "Set",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [1340, 200]
+    }
+  ],
+  "connections": {
+    "Groner: Search Deals": {
+      "main": [
+        [
+          {
+            "node": "Content.List",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Content.List": {
+      "main": [
+        [
+          {
+            "node": "IF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF": {
+      "main": [
+        [
+          {
+            "node": "Groner: Edit Deal",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groner: Edit Deal": {
+      "main": [
+        [
+          {
+            "node": "Groner: Add Tag",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groner: Add Tag": {
+      "main": [
+        [
+          {
+            "node": "Set",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "id": "workflow-example",
+  "tags": []
+}
