@@ -10,12 +10,12 @@ export class GronerApi implements ICredentialType {
 	displayName = 'Groner API';
 	properties: INodeProperties[] = [
 		{
-			displayName: 'Tenant',
+			displayName: 'Subdomain (Referencia)',
 			name: 'tenant',
 			type: 'string',
 			default: '',
 			placeholder: 'comercial',
-			description: 'Seu tenant do Groner (ex: comercial, minhaempresa)',
+			description: 'Seu subdomínio do Groner (ex: comercial, minhaempresa)',
 			required: true,
 		},
 		{

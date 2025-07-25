@@ -1,125 +1,1468 @@
-import type { INodeTypeDescription, IExecuteFunctions, INodeExecutionData, NodeConnectionType } from 'n8n-workflow';
-import { NodeOperationError } from 'n8n-workflow';
+/* eslint-disable n8n-nodes-base/node-filename-against-convention */
+import { INodeType, INodeTypeDescription } from 'n8n-workflow';
 import { getStatuses } from './loadOptions/getStatuses.js';
 import { getOrigins } from './loadOptions/getOrigins.js';
 import { getResponsibles } from './loadOptions/getResponsibles.js';
 import { getDealTypes } from './loadOptions/getDealTypes.js';
+import { getEtapas } from './loadOptions/getEtapas.js';
 import { getTags } from './loadOptions/getTags.js';
 import { getStores } from './loadOptions/getStores.js';
-import { getEtapas } from './loadOptions/getEtapas.js';
-import { getTaskTypes } from './loadOptions/getTaskTypes.js';
 import { getTaskStatuses } from './loadOptions/getTaskStatuses.js';
-import { getContactProperties } from './loadOptions/getContactProperties.js';
+import { getTaskTypes } from './loadOptions/getTaskTypes.js';
 import { getDealProperties } from './loadOptions/getDealProperties.js';
+import { getContactProperties } from './loadOptions/getContactProperties.js';
 
-// Consolidated imports
-import { createDealFields } from './operations/CreateDeal/CreateDeal.fields';
-import { executeCreateDeal } from './operations/CreateDeal/CreateDeal.operation';
-import { createDealDeclaration } from './operations/CreateDeal/CreateDeal.declaration';
-import { addNoteFields } from './operations/AddNote/AddNote.fields';
-import { executeAddNote } from './operations/AddNote/AddNote.operation';
-import { addNoteDeclaration } from './operations/AddNote/AddNote.declaration';
-import { addTagsFields } from './operations/AddTags/AddTags.fields';
-import { executeAddTags } from './operations/AddTags/AddTags.operation';
-import { addTagsDeclaration } from './operations/AddTags/AddTags.declaration';
-import { addTaskFields } from './operations/AddTask/AddTask.fields';
-import { executeAddTask } from './operations/AddTask/AddTask.operation';
-import { addTaskDeclaration } from './operations/AddTask/AddTask.declaration';
-import { editContactFields } from './operations/EditContact/EditContact.fields';
-import { executeEditContact } from './operations/EditContact/EditContact.operation';
-import { editContactDeclaration } from './operations/EditContact/EditContact.declaration';
-import { editDealFields } from './operations/EditDeal/EditDeal.fields';
-import { executeEditDeal } from './operations/EditDeal/EditDeal.operation';
-import { editDealDeclaration } from './operations/EditDeal/EditDeal.declaration';
-import { sendWhatsAppFields } from './operations/SendWhatsApp/SendWhatsApp.fields';
-import { executeSendWhatsApp } from './operations/SendWhatsApp/SendWhatsApp.operation';
-import { sendWhatsAppDeclaration } from './operations/SendWhatsApp/SendWhatsApp.declaration';
-import { moveDealFields } from './operations/MoveDeal/MoveDeal.fields';
-import { executeMoveDeal } from './operations/MoveDeal/MoveDeal.operation';
-import { moveDealDeclaration } from './operations/MoveDeal/MoveDeal.declaration';
-import { getDealQuoteFields } from './operations/GetDealQuote/GetDealQuote.fields';
-import { executeGetDealQuote } from './operations/GetDealQuote/GetDealQuote.operation';
-import { getDealQuoteDeclaration } from './operations/GetDealQuote/GetDealQuote.declaration';
-import { searchDealsFields } from './operations/SearchDeals/SearchDeals.fields';
-import { executeSearchDeals } from './operations/SearchDeals/SearchDeals.operation';
-import { searchDealsDeclaration } from './operations/SearchDeals/SearchDeals.declaration';
-import { searchTasksFields } from './operations/SearchTasks/SearchTasks.fields';
-import { executeSearchTasks } from './operations/SearchTasks/SearchTasks.operation';
-import { searchTasksDeclaration } from './operations/SearchTasks/SearchTasks.declaration';
+// Bilingual function to switch between English and Portuguese
+const t = (en: string, pt: string, usePortuguese: boolean = true) => {
+  return usePortuguese ? pt : en;
+};
 
-// Types
-type OperationKey =
-  | 'criarNegocio' | 'pesquisarNegocios' | 'adicionarEtiquetas' | 'adicionarNota' | 'adicionarTarefa'
-  | 'editarContatoPorPropriedade' | 'editarNegocioPorPropriedade' | 'enviarMensagemWhatsApp'
-  | 'moverNegocio' | 'obterOrcamentoNegocio' | 'pesquisarTarefas';
-
-type OperationExecutor = (this: IExecuteFunctions, itemIndex: number, items: INodeExecutionData[], credentials: any) => Promise<any>;
-
-// Consolidated configuration
-const CONFIG = {
-  node: {
-    displayName: 'Groner',
-    name: 'groner',
-    group: ['transform'] as string[],
-    version: 1,
-    description: 'Integration with Groner API',
-    icon: 'file:logogroner.svg',
-    credentials: 'gronerApi',
-  },
-  operations: {
-    declarations: [
-      createDealDeclaration, addNoteDeclaration, addTagsDeclaration, addTaskDeclaration,
-      editContactDeclaration, editDealDeclaration, sendWhatsAppDeclaration, moveDealDeclaration,
-      getDealQuoteDeclaration, searchDealsDeclaration, searchTasksDeclaration,
-    ],
-    executors: new Map<OperationKey, OperationExecutor>([
-      ['criarNegocio', executeCreateDeal],
-      ['pesquisarNegocios', executeSearchDeals],
-      ['adicionarEtiquetas', executeAddTags],
-      ['adicionarNota', executeAddNote],
-      ['adicionarTarefa', executeAddTask],
-      ['editarContatoPorPropriedade', executeEditContact],
-      ['editarNegocioPorPropriedade', executeEditDeal],
-      ['enviarMensagemWhatsApp', executeSendWhatsApp],
-      ['moverNegocio', executeMoveDeal],
-      ['obterOrcamentoNegocio', executeGetDealQuote],
-      ['pesquisarTarefas', executeSearchTasks],
-    ]),
-    fields: [
-      ...createDealFields, ...addNoteFields, ...addTagsFields, ...addTaskFields,
-      ...editContactFields, ...editDealFields, ...sendWhatsAppFields, ...moveDealFields,
-      ...getDealQuoteFields, ...searchDealsFields, ...searchTasksFields,
-    ],
-  },
-} as const;
-
-export class Groner {
+export class Groner implements INodeType {
   description: INodeTypeDescription = {
-    displayName: CONFIG.node.displayName,
-    name: CONFIG.node.name,
-    group: CONFIG.node.group,
-    version: CONFIG.node.version,
-    subtitle: '={{ $parameter["operation"] }}',
-    description: CONFIG.node.description,
-    icon: CONFIG.node.icon,
-    defaults: { name: CONFIG.node.displayName },
-    inputs: ['main'] as NodeConnectionType[],
-    outputs: ['main' as NodeConnectionType],
-    credentials: [{ name: CONFIG.node.credentials, required: true }],
+    displayName: t('Groner', 'Groner'),
+    name: 'groner',
+    icon: 'file:logogroner.svg',
+    group: ['transform'],
+    version: 1,
+    subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
+    description: t('Integrate with Groner CRM to manage deals, contacts, tasks, and more', 'Integrar com o Groner CRM para gerenciar negócios, contatos, tarefas e mais'),
+    defaults: { name: 'Groner' },
+    inputs: ['main' as any],
+    outputs: ['main' as any],
+    credentials: [{ name: 'gronerApi', required: true }],
+    requestDefaults: {
+      baseURL: '={{ "https://" + $credentials.tenant + ".api.groner.app" }}',
+    },
     properties: [
+      // Resource selector
+      {
+        displayName: 'Resource',
+        name: 'resource',
+        type: 'options',
+        noDataExpression: true,
+        options: [
+          { name: t('Contact', 'Contato'), value: 'contact' },
+          { name: t('Deal', 'Negócio'), value: 'deal' },
+          { name: t('Note', 'Nota'), value: 'note' },
+          { name: t('Tag', 'Etiqueta'), value: 'tag' },
+          { name: t('Task', 'Tarefa'), value: 'task' },
+          { name: t('WhatsApp', 'WhatsApp'), value: 'whatsapp' },
+        ],
+        default: 'deal',
+      },
+
+      // Operation selector for Deals
       {
         displayName: 'Operation',
         name: 'operation',
         type: 'options',
         noDataExpression: true,
-        options: CONFIG.operations.declarations.map(d => ({
-          name: d.label,
-          value: d.operation,
-          description: d.description,
-        })),
-        default: '',
+        displayOptions: { show: { resource: ['deal'] } },
+        options: [
+          {
+            name: t('Create', 'Criar'),
+            value: 'create',
+            action: t('Create a new deal', 'Criar um novo negócio'),
+            description: t('Create a new deal in Groner', 'Criar um novo negócio no Groner'),
+            routing: {
+              request: {
+                method: 'POST',
+                url: '=/api/lead/FluentForm/{{$parameter["codOrigem"]}}',
+                headers: {
+                  'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: {
+                  nome: '={{$parameter["nome"]}}',
+                  email: '={{$parameter["email"]}}',
+                  telefone: '={{$parameter["telefone"]}}',
+                  cidade: '={{$parameter["cidade"]}}',
+                  documento: '={{$parameter["documento"]}}',
+                  tipoPessoa: '={{$parameter["tipoPessoa"]}}',
+                  uf: '={{$parameter["uf"]}}',
+                  valorConta: '={{$parameter["valorConta"]}}',
+                  responsavelId: '={{$parameter["responsavelId"]}}',
+                  emailResponsavel: '={{$parameter["emailResponsavel"]}}',
+                  nota: '={{$parameter["nota"]}}',
+                  url: '={{$parameter["url"]}}',
+                  campanha: '={{$parameter["campanha"]}}',
+                  anuncio: '={{$parameter["anuncio"]}}',
+                  conjuntoAnuncios: '={{$parameter["conjuntoAnuncios"]}}',
+                  codigoLeadTracking: '={{$parameter["codigoLeadTracking"]}}',
+                  nomeFantasia: '={{$parameter["nomeFantasia"]}}',
+                  segmento: '={{$parameter["segmento"]}}',
+                  tipoProjetoId: '={{$parameter["tipoProjetoId"]}}',
+                },
+              },
+            },
+          },
+          {
+            name: t('Edit', 'Editar'),
+            value: 'edit',
+            action: t('Edit a deal', 'Editar um negócio'),
+            description: t('Edit an existing deal', 'Editar um negócio existente'),
+            routing: {
+              request: {
+                method: 'PUT',
+                url: '=/api/projeto/{{$parameter["dealId"]}}',
+                body: {
+                  name: '={{$parameter["name"]}}',
+                  email: '={{$parameter["email"]}}',
+                  phone: '={{$parameter["phone"]}}',
+                  city: '={{$parameter["additionalFields.city"]}}',
+                  document: '={{$parameter["additionalFields.document"]}}',
+                  personType: '={{$parameter["additionalFields.personType"]}}',
+                  state: '={{$parameter["additionalFields.state"]}}',
+                  accountValue: '={{$parameter["additionalFields.accountValue"]}}',
+                  responsibleId: '={{$parameter["additionalFields.responsibleId"]}}',
+                  responsibleEmail: '={{$parameter["additionalFields.responsibleEmail"]}}',
+                  note: '={{$parameter["additionalFields.note"]}}',
+                  campaign: '={{$parameter["additionalFields.campaign"]}}',
+                  ad: '={{$parameter["additionalFields.advertisement"]}}',
+                  adSet: '={{$parameter["additionalFields.adSet"]}}',
+                  leadTrackingCode: '={{$parameter["additionalFields.leadTrackingCode"]}}',
+                  tradeName: '={{$parameter["additionalFields.tradeName"]}}',
+                  segment: '={{$parameter["additionalFields.segment"]}}',
+                  dealType: '={{$parameter["additionalFields.dealTypeId"]}}',
+                },
+              },
+            },
+          },
+          {
+            name: t('Edit by Property', 'Editar por Propriedade'),
+            value: 'editByProperty',
+            action: t('Edit deal by property', 'Editar negócio por propriedade'),
+            description: t('Edit deal by specific property', 'Editar negócio por propriedade específica'),
+            routing: {
+              request: {
+                method: 'PUT',
+                url: '=/api/projeto/{{$parameter["dealId"]}}',
+                body: {
+                  propriedade: '={{$parameter["propriedade"]}}',
+                  valor: '={{$parameter["valor"]}}',
+                },
+              },
+            },
+          },
+          {
+            name: t('Get Quote', 'Obter Orçamento'),
+            value: 'getQuote',
+            action: t('Get deal quote', 'Obter orçamento do negócio'),
+            description: t('Get quote information for a deal', 'Obter informações de orçamento para um negócio'),
+            routing: {
+              request: {
+                method: 'GET',
+                url: '=/api/orcamento/unico/{{$parameter["projetoId"]}}?pageSize=5&pageNumber=1',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Accept': 'application/json',
+                },
+              },
+            },
+          },
+          {
+            name: t('Move', 'Mover'),
+            value: 'move',
+            action: t('Move a deal', 'Mover um negócio'),
+            description: t('Move a deal to a different stage', 'Mover um negócio para um estágio diferente'),
+            routing: {
+              request: {
+                method: 'POST',
+                url: '=/api/projeto/adicionarStatus/{{$parameter["dealId"]}}?validaStatusDisponivel={{$parameter["validaStatusDisponivel"]}}',
+                body: {
+                  statusId: '={{$parameter["statusId"]}}',
+                },
+              },
+            },
+          },
+          {
+            name: t('Search', 'Pesquisar'),
+            value: 'search',
+            action: t('Search for deals', 'Pesquisar negócios'),
+            description: t('Search deals with filters', 'Pesquisar negócios com filtros'),
+            routing: {
+              request: {
+                method: 'GET',
+                url: '=/api/projeto/cards',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Accept': 'application/json, text/plain, */*',
+                },
+                qs: {
+                  pageSize: '={{$parameter["pageSize"]}}',
+                  query: '={{$parameter["query"]}}',
+                  criterio: '={{$parameter["criterio"]}}',
+                  tipoProjetoId: '={{$parameter["tipoProjetoId"]}}',
+                  etapaId: '={{$parameter["etapaId"]}}',
+                  statusId: '={{$parameter["statusId"]}}',
+                  vendedorResponsavelId: '={{$parameter["vendedorResponsavelId"]}}',
+                  tecnicoResponsavelId: '={{$parameter["tecnicoResponsavelId"]}}',
+                  preVendedorId: '={{$parameter["preVendedorId"]}}',
+                  leadId: '={{$parameter["leadId"]}}',
+                  lojasIds: '={{$parameter["lojasIds"]}}',
+                  cidade: '={{$parameter["cidade"]}}',
+                  uf: '={{$parameter["uf"]}}',
+                  potenciaInicial: '={{$parameter["potenciaInicial"]}}',
+                  potenciaFinal: '={{$parameter["potenciaFinal"]}}',
+                  valorInicial: '={{$parameter["valorInicial"]}}',
+                  valorFinal: '={{$parameter["valorFinal"]}}',
+                  consumoInicial: '={{$parameter["consumoInicial"]}}',
+                  consumoFinal: '={{$parameter["consumoFinal"]}}',
+                  etiquetasIds: '={{$parameter["etiquetasIds"]}}',
+                  origensIds: '={{$parameter["origensIds"]}}',
+                  statusHistoricoIds: '={{$parameter["statusHistoricoIds"]}}',
+                  nStatusHistoricoIds: '={{$parameter["nStatusHistoricoIds"]}}',
+                  dataInicial: '={{$parameter["dataInicial"]}}',
+                  dataFinal: '={{$parameter["dataFinal"]}}',
+                  dataPrevisaoFechamentoInicial: '={{$parameter["dataPrevisaoFechamentoInicial"]}}',
+                  dataPrevisaoFechamentoFinal: '={{$parameter["dataPrevisaoFechamentoFinal"]}}',
+                  dataPropostaAceitaInicial: '={{$parameter["dataPropostaAceitaInicial"]}}',
+                  dataPropostaAceitaFinal: '={{$parameter["dataPropostaAceitaFinal"]}}',
+                  dataVendaInicial: '={{$parameter["dataVendaInicial"]}}',
+                  dataVendaFinal: '={{$parameter["dataVendaFinal"]}}',
+                  dataPerdaInicial: '={{$parameter["dataPerdaInicial"]}}',
+                  dataPerdaFinal: '={{$parameter["dataPerdaFinal"]}}',
+                  ordenarPor: '={{$parameter["ordenarPor"]}}',
+                  qualificacaoInicial: '={{$parameter["qualificacaoInicial"]}}',
+                  qualificacaoFinal: '={{$parameter["qualificacaoFinal"]}}',
+                  indicador: '={{$parameter["indicador"]}}',
+                  donoContatoId: '={{$parameter["donoContatoId"]}}',
+                  campanha: '={{$parameter["campanha"]}}',
+                  anuncio: '={{$parameter["anuncio"]}}',
+                  conjuntoAnuncios: '={{$parameter["conjuntoAnuncios"]}}',
+                },
+              },
+            },
+          },
+        ],
+        default: 'search',
       },
-      ...CONFIG.operations.fields,
+
+      // Operation selector for Contacts
+      {
+        displayName: 'Operation',
+        name: 'operation',
+        type: 'options',
+        noDataExpression: true,
+        displayOptions: { show: { resource: ['contact'] } },
+        options: [
+          {
+            name: t('Edit', 'Editar'),
+            value: 'edit',
+            action: t('Edit contact', 'Editar contato'),
+            description: t('Edit contact information', 'Editar informações do contato'),
+            routing: {
+              request: {
+                method: 'PUT',
+                url: '=/api/contato/{{$parameter["contactId"]}}',
+                body: {
+                  name: '={{$parameter["name"]}}',
+                  email: '={{$parameter["email"]}}',
+                  phone: '={{$parameter["phone"]}}',
+                  city: '={{$parameter["additionalFields.city"]}}',
+                  state: '={{$parameter["additionalFields.state"]}}',
+                  document: '={{$parameter["additionalFields.document"]}}',
+                  personType: '={{$parameter["additionalFields.personType"]}}',
+                },
+              },
+            },
+          },
+          {
+            name: t('Edit by Property', 'Editar por Propriedade'),
+            value: 'editByProperty',
+            action: t('Edit contact by property', 'Editar contato por propriedade'),
+            description: t('Edit contact by specific property', 'Editar contato por propriedade específica'),
+            routing: {
+              request: {
+                method: 'PUT',
+                url: '=/api/lead/{{$parameter["contactId"]}}',
+                body: {
+                  propriedade: '={{$parameter["propriedade"]}}',
+                  valor: '={{$parameter["valor"]}}',
+                },
+              },
+            },
+          },
+        ],
+        default: 'edit',
+      },
+
+      // Operation selector for Tasks
+      {
+        displayName: 'Operation',
+        name: 'operation',
+        type: 'options',
+        noDataExpression: true,
+        displayOptions: { show: { resource: ['task'] } },
+        options: [
+          {
+            name: t('Create', 'Criar'),
+            value: 'create',
+            action: t('Create a task', 'Criar uma tarefa'),
+            description: t('Create a new task', 'Criar uma nova tarefa'),
+            routing: {
+              request: {
+                method: 'POST',
+                url: '=/api/tarefa',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Accept': 'application/json',
+                },
+                body: {
+                  titulo: '={{$parameter["titulo"]}}',
+                  descricao: '={{$parameter["descricao"]}}',
+                  tipoId: '={{$parameter["tipoId"]}}',
+                  statusId: '={{$parameter["statusId"]}}',
+                  projetoId: '={{$parameter["projetoId"]}}',
+                  usuariosIds: '={{$parameter["usuariosIds"]}}',
+                  dataInicial: '={{$parameter["dataInicial"]}}',
+                  dataEntrega: '={{$parameter["dataEntrega"]}}',
+                },
+              },
+            },
+          },
+          {
+            name: t('Search', 'Pesquisar'),
+            value: 'search',
+            action: t('Search tasks', 'Pesquisar tarefas'),
+            description: t('Search for tasks', 'Pesquisar tarefas'),
+            routing: {
+              request: {
+                method: 'GET',
+                url: '=/api/tarefa',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Accept': 'application/json, text/plain, */*',
+                },
+                qs: {
+                  leadId: '={{$parameter["leadId"]}}',
+                  projetoId: '={{$parameter["projetoId"]}}',
+                  tipoId: '={{$parameter["tipoId"]}}',
+                  pageNumber: '={{$parameter["pageNumber"]}}',
+                  pageSize: '={{$parameter["pageSize"]}}',
+                  query: '={{$parameter["query"]}}',
+                  usuarioId: '={{$parameter["usuarioId"]}}',
+                  lojasIds: '={{$parameter["lojasIds"]}}',
+                  statusId: '={{$parameter["statusId"]}}',
+                  ordenarPor: '={{$parameter["ordenarPor"]}}',
+                  dataInicial: '={{$parameter["dataInicial"]}}',
+                  dataFinal: '={{$parameter["dataFinal"]}}',
+                },
+              },
+            },
+          },
+        ],
+        default: 'create',
+      },
+
+      // Operation selector for Notes
+      {
+        displayName: 'Operation',
+        name: 'operation',
+        type: 'options',
+        noDataExpression: true,
+        displayOptions: { show: { resource: ['note'] } },
+        options: [
+          {
+            name: t('Add', 'Adicionar'),
+            value: 'add',
+            action: t('Add a note', 'Adicionar uma nota'),
+            description: t('Add a note to a deal', 'Adicionar uma nota a um negócio'),
+            routing: {
+              request: {
+                method: 'POST',
+                url: '=/api/projeto/adicionarocorrencia/{{$parameter["dealId"]}}',
+                body: {
+                  ocorrencia: '={{$parameter["ocorrencia"]}}',
+                  marcacoes: '={{$parameter["marcacoes"]}}',
+                },
+              },
+            },
+          },
+        ],
+        default: 'add',
+      },
+
+      // Operation selector for Tags
+      {
+        displayName: 'Operation',
+        name: 'operation',
+        type: 'options',
+        noDataExpression: true,
+        displayOptions: { show: { resource: ['tag'] } },
+        options: [
+          {
+            name: t('Add', 'Adicionar'),
+            value: 'add',
+            action: t('Add tags', 'Adicionar etiquetas'),
+            description: t('Add tags to a deal', 'Adicionar etiquetas a um negócio'),
+            routing: {
+              request: {
+                method: 'POST',
+                url: '=/api/projeto/AlterarEtiquetas/{{$parameter["dealId"]}}',
+                body: '={{$parameter["tagIds"]}}',
+              },
+            },
+          },
+        ],
+        default: 'add',
+      },
+
+      // Operation selector for WhatsApp
+      {
+        displayName: 'Operation',
+        name: 'operation',
+        type: 'options',
+        noDataExpression: true,
+        displayOptions: { show: { resource: ['whatsapp'] } },
+        options: [
+          {
+            name: t('Send', 'Enviar'),
+            value: 'send',
+            action: t('Send whats app message', 'Enviar mensagem WhatsApp'),
+            description: t('Send a WhatsApp message', 'Enviar uma mensagem WhatsApp'),
+            routing: {
+              request: {
+                method: 'POST',
+                url: '=/api/WhatsApp/enviarMensagem',
+                body: {
+                  leadId: '={{$parameter["leadId"]}}',
+                  mensagem: '={{$parameter["mensagem"]}}',
+                  celular: '={{$parameter["celular"]}}',
+                  urlImagem: '={{$parameter["urlImagem"]}}',
+                  urlAudio: '={{$parameter["urlAudio"]}}',
+                  urlVideo: '={{$parameter["urlVideo"]}}',
+                  urlDocumento: '={{$parameter["urlDocumento"]}}',
+                  preVendedor: '={{$parameter["preVendedor"]}}',
+                  vendedor: '={{$parameter["vendedor"]}}',
+                  tecnico: '={{$parameter["tecnico"]}}',
+                  lead: '={{$parameter["lead"]}}',
+                },
+              },
+            },
+          },
+        ],
+        default: 'send',
+      },
+
+      // ===== CAMPOS PARA CREATE DEAL =====
+      {
+        displayName: 'Nome',
+        name: 'nome',
+        type: 'string',
+        required: true,
+        default: '',
+        displayOptions: { show: { resource: ['deal'], operation: ['create', 'edit'] } },
+        description: 'Lead/deal name',
+      },
+      {
+        displayName: 'Endereço de Email',
+        name: 'email',
+        type: 'string',
+        required: true,
+        default: '',
+        placeholder: 'john.doe@example.com',
+        displayOptions: { show: { resource: ['deal'], operation: ['create', 'edit'] } },
+        description: 'Lead email address',
+      },
+      {
+        displayName: 'Telefone',
+        name: 'telefone',
+        type: 'string',
+        required: true,
+        default: '',
+        placeholder: '+55 11 99999-9999',
+        displayOptions: { show: { resource: ['deal'], operation: ['create', 'edit'] } },
+        description: 'Lead phone number',
+      },
+      {
+        displayName: 'Código de Origem',
+        name: 'codOrigem',
+        type: 'options',
+        typeOptions: { loadOptionsMethod: 'getOrigins' },
+        required: false,
+        default: '',
+        displayOptions: { show: { resource: ['deal'], operation: ['create'] } },
+        description: 'Lead origin. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+      },
+
+      // Additional fields for Create and Edit Deal
+      {
+        displayName: 'Additional Fields',
+        name: 'additionalFields',
+        type: 'collection',
+        placeholder: 'Add Field',
+        default: {},
+        displayOptions: { show: { resource: ['deal'], operation: ['create', 'edit'] } },
+        options: [
+          {
+            displayName: 'Anuncio',
+            name: 'anuncio',
+            type: 'string',
+            default: '',
+            placeholder: 'Google Ads Campaign',
+            description: 'Origin advertisement',
+          },
+          {
+            displayName: 'Campanha',
+            name: 'campanha',
+            type: 'string',
+            default: '',
+            placeholder: 'Summer Sale 2024',
+            description: 'Origin campaign',
+          },
+          {
+            displayName: 'Cidade',
+            name: 'cidade',
+            type: 'string',
+            default: '',
+            placeholder: 'São Paulo',
+            description: 'Lead city',
+          },
+          {
+            displayName: 'Codigo de Lead Tracking',
+            name: 'codigoLeadTracking',
+            type: 'string',
+            default: '',
+            placeholder: 'TRACK123',
+            description: 'Tracking code for the lead',
+          },
+          {
+            displayName: 'Conjunto de Anuncios',
+            name: 'conjuntoAnuncios',
+            type: 'string',
+            default: '',
+            placeholder: 'Ad Set 1',
+            description: 'Ad set for campaign',
+          },
+          {
+            displayName: 'Documento (CPF ou CNPJ)',
+            name: 'documento',
+            type: 'string',
+            default: '',
+            placeholder: '123.456.789-00',
+            description: 'CPF/CNPJ number',
+          },
+          {
+            displayName: 'Email do Responsavel',
+            name: 'emailResponsavel',
+            type: 'string',
+            default: '',
+            placeholder: 'responsible@company.com',
+            description: 'Responsible person email',
+          },
+          {
+            displayName: 'ID do Responsavel',
+            name: 'responsavelId',
+            type: 'options',
+            typeOptions: { loadOptionsMethod: 'getResponsibles' },
+            default: '',
+            description: 'Responsible person. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+          },
+          {
+            displayName: 'Nome Fantasia',
+            name: 'nomeFantasia',
+            type: 'string',
+            default: '',
+            placeholder: 'Company Name',
+            description: 'Trade name',
+          },
+          {
+            displayName: 'Nota',
+            name: 'nota',
+            type: 'string',
+            typeOptions: { rows: 3 },
+            default: '',
+            placeholder: 'Additional notes about this lead...',
+            description: 'Observation/note',
+          },
+          {
+            displayName: 'Segmento',
+            name: 'segmento',
+            type: 'string',
+            default: '',
+            placeholder: 'Residential',
+            description: 'Business segment',
+          },
+          {
+            displayName: 'Tipo de Negocio',
+            name: 'tipoProjetoId',
+            type: 'options',
+            typeOptions: { loadOptionsMethod: 'getDealTypes' },
+            default: '',
+            description: 'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
+          },
+          {
+            displayName: 'Tipo de Pessoa (PF ou PJ)',
+            name: 'tipoPessoa',
+            type: 'options',
+            options: [
+              { name: 'Individual', value: 'F' },
+              { name: 'Company', value: 'J' },
+            ],
+            default: 'F',
+          },
+          {
+            displayName: 'UF',
+            name: 'uf',
+            type: 'string',
+            default: '',
+            placeholder: 'SP',
+            description: 'State (UF)',
+          },
+          {
+            displayName: 'URL',
+            name: 'url',
+            type: 'string',
+            default: '',
+            placeholder: 'https://example.com',
+            description: 'URL',
+          },
+          {
+            displayName: 'Valor da Conta',
+            name: 'valorConta',
+            type: 'number',
+            typeOptions: { minValue: 0, numberPrecision: 2 },
+            default: 0,
+            placeholder: '0.00',
+            description: 'Estimated deal value',
+          },
+                      {
+              displayName: 'Trade Name',
+              name: 'tradeName',
+              type: 'string',
+              default: '',
+              placeholder: 'Company Trade Name',
+              description: 'Trade name of the company',
+            },
+            {
+              displayName: 'Deal Properties',
+              name: 'dealProperties',
+              type: 'options',
+              typeOptions: { loadOptionsMethod: 'getDealProperties' },
+              default: '',
+              description: 'Additional deal properties. Choose from the list, or specify a property using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+            },
+          ],
+        },
+
+      // ===== CAMPOS PARA SEARCH DEALS =====
+      {
+        displayName: 'Page Size',
+        name: 'pageSize',
+        type: 'number',
+        typeOptions: { minValue: 1, maxValue: 100 },
+        default: 20,
+        displayOptions: { show: { resource: ['deal'], operation: ['search'] } },
+        description: 'Number of deals to return per page',
+      },
+      {
+        displayName: 'Search Query',
+        name: 'query',
+        type: 'string',
+        default: '',
+        displayOptions: { show: { resource: ['deal'], operation: ['search'] } },
+        placeholder: 'Search by deal name, contact, or description',
+        description: 'General search term to find deals',
+      },
+      {
+        displayName: 'Search Criteria',
+        name: 'criteria',
+        type: 'string',
+        default: '',
+        displayOptions: { show: { resource: ['deal'], operation: ['search'] } },
+        placeholder: 'Specific search criteria',
+        description: 'Additional search criteria',
+      },
+
+      // Filters section for Search Deals
+      {
+        displayName: 'Filters',
+        name: 'filters',
+        type: 'collection',
+        placeholder: 'Add Filter',
+        default: {},
+        displayOptions: { show: { resource: ['deal'], operation: ['search'] } },
+        options: [
+          {
+            displayName: 'Deal Type Name or ID',
+            name: 'dealTypeId',
+            type: 'options',
+            typeOptions: { loadOptionsMethod: 'getDealTypes' },
+            default: '',
+            description: 'Filter by deal type. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+          },
+          {
+            displayName: 'Pre-Seller Name or ID',
+            name: 'preSellerId',
+            type: 'options',
+            typeOptions: { loadOptionsMethod: 'getResponsibles' },
+            default: '',
+            description: 'Filter by pre-seller. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+          },
+          {
+            displayName: 'Responsible Seller Name or ID',
+            name: 'responsibleSellerId',
+            type: 'options',
+            typeOptions: { loadOptionsMethod: 'getResponsibles' },
+            default: '',
+            description: 'Filter by responsible seller. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+          },
+          {
+            displayName: 'Responsible Technician Name or ID',
+            name: 'responsibleTechnicianId',
+            type: 'options',
+            typeOptions: { loadOptionsMethod: 'getResponsibles' },
+            default: '',
+            description: 'Filter by responsible technician. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+          },
+          {
+            displayName: 'Stage Name or ID',
+            name: 'stageId',
+            type: 'options',
+            typeOptions: { loadOptionsMethod: 'getEtapas' },
+            default: '',
+            description: 'Filter by deal stage. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+          },
+          {
+            displayName: 'Status Name or ID',
+            name: 'statusId',
+            type: 'options',
+            typeOptions: { loadOptionsMethod: 'getStatuses' },
+            default: '',
+            description: 'Filter by deal status. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+          },
+        ],
+      },
+
+      // Location section for Search Deals
+      {
+        displayName: 'Location',
+        name: 'location',
+        type: 'collection',
+        placeholder: 'Add Location Filter',
+        default: {},
+        displayOptions: { show: { resource: ['deal'], operation: ['search'] } },
+        options: [
+          {
+            displayName: 'City',
+            name: 'city',
+            type: 'string',
+            default: '',
+            placeholder: 'São Paulo',
+            description: 'Filter by city',
+          },
+          {
+            displayName: 'State',
+            name: 'state',
+            type: 'string',
+            default: '',
+            placeholder: 'SP',
+            description: 'Filter by state (UF, e.g., SP, RJ, MG)',
+          },
+        ],
+      },
+
+      // Financial section for Search Deals
+      {
+        displayName: 'Financial',
+        name: 'financial',
+        type: 'collection',
+        placeholder: 'Add Financial Filter',
+        default: {},
+        displayOptions: { show: { resource: ['deal'], operation: ['search'] } },
+        options: [
+          {
+            displayName: 'Final Consumption (kWh)',
+            name: 'finalConsumption',
+            type: 'number',
+            typeOptions: { minValue: 0, numberPrecision: 2 },
+            default: 0,
+            placeholder: '1000.00',
+            description: 'Maximum consumption in kWh',
+          },
+          {
+            displayName: 'Final Power (kW)',
+            name: 'finalPower',
+            type: 'number',
+            typeOptions: { minValue: 0, numberPrecision: 2 },
+            default: 0,
+            placeholder: '100.00',
+            description: 'Maximum power in kW',
+          },
+          {
+            displayName: 'Final Value',
+            name: 'finalValue',
+            type: 'number',
+            typeOptions: { minValue: 0, numberPrecision: 2 },
+            default: 0,
+            placeholder: '100000.00',
+            description: 'Maximum deal value',
+          },
+          {
+            displayName: 'Initial Consumption (kWh)',
+            name: 'initialConsumption',
+            type: 'number',
+            typeOptions: { minValue: 0, numberPrecision: 2 },
+            default: 0,
+            placeholder: '0.00',
+            description: 'Minimum consumption in kWh',
+          },
+          {
+            displayName: 'Initial Power (kW)',
+            name: 'initialPower',
+            type: 'number',
+            typeOptions: { minValue: 0, numberPrecision: 2 },
+            default: 0,
+            placeholder: '0.00',
+            description: 'Minimum power in kW',
+          },
+          {
+            displayName: 'Initial Value',
+            name: 'initialValue',
+            type: 'number',
+            typeOptions: { minValue: 0, numberPrecision: 2 },
+            default: 0,
+            placeholder: '0.00',
+            description: 'Minimum deal value',
+          },
+        ],
+      },
+
+      // Dates section for Search Deals
+      {
+        displayName: 'Dates',
+        name: 'dates',
+        type: 'collection',
+        placeholder: 'Add Date Filter',
+        default: {},
+        displayOptions: { show: { resource: ['deal'], operation: ['search'] } },
+        options: [
+          {
+            displayName: 'End Date',
+            name: 'endDate',
+            type: 'string',
+            default: '',
+            placeholder: '2024-12-31',
+            description: 'Filter deals created until this date',
+          },
+          {
+            displayName: 'Final Closing Forecast Date',
+            name: 'finalClosingForecastDate',
+            type: 'string',
+            default: '',
+            placeholder: '2024-12-31',
+            description: 'Maximum closing forecast date',
+          },
+          {
+            displayName: 'Final Sale Date',
+            name: 'finalSaleDate',
+            type: 'string',
+            default: '',
+            placeholder: '2024-12-31',
+            description: 'Maximum sale date',
+          },
+          {
+            displayName: 'Initial Closing Forecast Date',
+            name: 'initialClosingForecastDate',
+            type: 'string',
+            default: '',
+            placeholder: '2024-01-01',
+            description: 'Minimum closing forecast date',
+          },
+          {
+            displayName: 'Initial Sale Date',
+            name: 'initialSaleDate',
+            type: 'string',
+            default: '',
+            placeholder: '2024-01-01',
+            description: 'Minimum sale date',
+          },
+          {
+            displayName: 'Start Date',
+            name: 'startDate',
+            type: 'string',
+            default: '',
+            placeholder: '2024-01-01',
+            description: 'Filter deals created from this date',
+          },
+        ],
+      },
+
+      // Additional fields for Search Deals
+      {
+        displayName: 'Additional Fields',
+        name: 'additionalFields',
+        type: 'collection',
+        placeholder: 'Add Field',
+        default: {},
+        displayOptions: { show: { resource: ['deal'], operation: ['search'] } },
+        options: [
+          {
+            displayName: 'Ad Set',
+            name: 'adSet',
+            type: 'string',
+            default: '',
+            placeholder: 'Ad Set 1',
+            description: 'Filter by ad set',
+          },
+          {
+            displayName: 'Advertisement',
+            name: 'advertisement',
+            type: 'string',
+            default: '',
+            placeholder: 'Google Ads Campaign',
+            description: 'Filter by advertisement',
+          },
+          {
+            displayName: 'Campaign',
+            name: 'campaign',
+            type: 'string',
+            default: '',
+            placeholder: 'Summer Sale 2024',
+            description: 'Filter by marketing campaign',
+          },
+          {
+            displayName: 'Contact Owner ID',
+            name: 'contactOwnerId',
+            type: 'string',
+            default: '',
+            placeholder: 'owner123',
+            description: 'Filter by contact owner ID',
+          },
+          {
+            displayName: 'Final Qualification',
+            name: 'finalQualification',
+            type: 'number',
+            typeOptions: { minValue: 0, maxValue: 10, numberPrecision: 1 },
+            default: 0,
+            placeholder: '10.0',
+            description: 'Maximum qualification score',
+          },
+          {
+            displayName: 'Indicator',
+            name: 'indicator',
+            type: 'string',
+            default: '',
+            placeholder: 'performance indicator',
+            description: 'Performance indicator',
+          },
+          {
+            displayName: 'Initial Qualification',
+            name: 'initialQualification',
+            type: 'number',
+            typeOptions: { minValue: 0, maxValue: 10, numberPrecision: 1 },
+            default: 0,
+            placeholder: '0.0',
+            description: 'Minimum qualification score',
+          },
+          {
+            displayName: 'Lead ID',
+            name: 'leadId',
+            type: 'number',
+            typeOptions: { minValue: 1 },
+            default: 0,
+            placeholder: '12345',
+            description: 'Filter by specific lead ID',
+          },
+          {
+            displayName: 'N Status History IDs',
+            name: 'nStatusHistoryIds',
+            type: 'string',
+            default: '',
+            placeholder: '1,2,3',
+            description: 'Filter by negative status history IDs',
+          },
+          {
+            displayName: 'Origin Name or ID',
+            name: 'originIds',
+            type: 'options',
+            typeOptions: { loadOptionsMethod: 'getOrigins' },
+            default: '',
+            description: 'Filter by origin IDs. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+          },
+          {
+            displayName: 'Sort By',
+            name: 'sortBy',
+            type: 'string',
+            default: '',
+            placeholder: 'name, value, date',
+            description: 'Field to sort results by (e.g., name, value, date)',
+          },
+          {
+            displayName: 'Status History IDs',
+            name: 'statusHistoryIds',
+            type: 'string',
+            default: '',
+            placeholder: '1,2,3',
+            description: 'Filter by status history IDs',
+          },
+          {
+            displayName: 'Store Name or ID',
+            name: 'storeIds',
+            type: 'options',
+            typeOptions: { loadOptionsMethod: 'getStores' }, // Supondo que haja um endpoint para lojas
+            default: '',
+            description: 'Filter by store IDs. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+          },
+          {
+            displayName: 'Tag Name or ID',
+            name: 'tagIds',
+            type: 'options',
+            typeOptions: { loadOptionsMethod: 'getTags' }, // Supondo que haja um endpoint para tags
+            default: '',
+            description: 'Filter by tag IDs. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+          },
+        ],
+      },
+
+      // ===== CAMPOS PARA ADD NOTE =====
+      {
+        displayName: 'Negocio Id',
+        name: 'dealId',
+        type: 'number',
+        typeOptions: { minValue: 1 },
+        required: true,
+        default: '',
+        displayOptions: { show: { resource: ['note'], operation: ['add'] } },
+        placeholder: '12345',
+        description: 'The deal ID to add a note to',
+      },
+      {
+        displayName: 'Nota',
+        name: 'ocorrencia',
+        type: 'string',
+        typeOptions: { rows: 4 },
+        required: true,
+        default: '',
+        displayOptions: { show: { resource: ['note'], operation: ['add'] } },
+        placeholder: 'Enter your note here...',
+        description: 'The note content',
+      },
+      {
+        displayName: 'Marcações',
+        name: 'marcacoes',
+        type: 'string',
+        default: '',
+        displayOptions: { show: { resource: ['note'], operation: ['add'] } },
+        placeholder: '@user1, @user2',
+        description: 'Mentions or tags',
+      },
+
+      // ===== CAMPOS PARA MOVE DEAL =====
+      {
+        displayName: 'Deal Name or ID',
+        name: 'dealId',
+        type: 'string',
+        required: true,
+        default: '',
+        displayOptions: { show: { resource: ['deal'], operation: ['move'] } },
+        placeholder: '12345 or Deal Name',
+        description: 'The deal to move',
+      },
+      {
+        displayName: 'Stage Name or ID',
+        name: 'stageId',
+        type: 'options',
+        typeOptions: { loadOptionsMethod: 'getEtapas' },
+        required: true,
+        default: '',
+        displayOptions: { show: { resource: ['deal'], operation: ['move'] } },
+        description: 'The stage to move the deal to. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+      },
+
+      // ===== CAMPOS PARA GET QUOTE =====
+      {
+        displayName: 'Deal Name or ID',
+        name: 'dealId',
+        type: 'string',
+        required: true,
+        default: '',
+        displayOptions: { show: { resource: ['deal'], operation: ['getQuote'] } },
+        placeholder: '12345 or Deal Name',
+        description: 'The deal to get quote for',
+      },
+
+      // ===== CAMPOS PARA EDIT DEAL =====
+      {
+        displayName: 'Deal Name or ID',
+        name: 'dealId',
+        type: 'string',
+        required: true,
+        default: '',
+        displayOptions: { show: { resource: ['deal'], operation: ['edit'] } },
+        placeholder: '12345 or Deal Name',
+        description: 'The deal to edit',
+      },
+
+      // ===== CAMPOS PARA EDIT CONTACT =====
+      {
+        displayName: 'Contact Name or ID',
+        name: 'contactId',
+        type: 'string',
+        required: true,
+        default: '',
+        displayOptions: { show: { resource: ['contact'], operation: ['edit'] } },
+        placeholder: '12345 or Contact Name',
+        description: 'The contact to edit',
+      },
+
+      // Additional fields for Edit Contact
+      {
+        displayName: 'Additional Fields',
+        name: 'additionalFields',
+        type: 'collection',
+        placeholder: 'Add Field',
+        default: {},
+        displayOptions: { show: { resource: ['contact'], operation: ['edit'] } },
+        options: [
+          {
+            displayName: 'City',
+            name: 'city',
+            type: 'string',
+            default: '',
+            placeholder: 'São Paulo',
+            description: 'Contact city',
+          },
+          {
+            displayName: 'State',
+            name: 'state',
+            type: 'string',
+            default: '',
+            placeholder: 'SP',
+            description: 'Contact state (UF)',
+          },
+          {
+            displayName: 'Document',
+            name: 'document',
+            type: 'string',
+            default: '',
+            placeholder: '123.456.789-00',
+            description: 'CPF/CNPJ number',
+          },
+                      {
+              displayName: 'Person Type',
+              name: 'personType',
+              type: 'options',
+              options: [
+                { name: 'Individual', value: 'F' },
+                { name: 'Company', value: 'J' },
+              ],
+              default: 'F',
+              description: 'Type of person (Individual or Company)',
+            },
+            {
+              displayName: 'Contact Properties',
+              name: 'contactProperties',
+              type: 'options',
+              typeOptions: { loadOptionsMethod: 'getContactProperties' },
+              default: '',
+              description: 'Additional contact properties. Choose from the list, or specify a property using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+            },
+          ],
+        },
+
+      // ===== CAMPOS PARA EDIT CONTACT BY PROPERTY =====
+      {
+        displayName: t('Contact Name or ID', 'Nome ou ID do Contato'),
+        name: 'contactId',
+        type: 'number',
+        typeOptions: { minValue: 1 },
+        required: true,
+        default: '',
+        displayOptions: { show: { resource: ['contact'], operation: ['editByProperty'] } },
+        placeholder: '12345',
+        description: t('The contact to edit', 'O contato a ser editado'),
+      },
+      {
+        displayName: t('Property', 'Propriedade'),
+        name: 'propriedade',
+        type: 'options',
+        typeOptions: { loadOptionsMethod: 'getContactProperties' },
+        required: true,
+        default: '',
+        displayOptions: { show: { resource: ['contact'], operation: ['editByProperty'] } },
+        description: t('Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>', 'Escolha da lista, ou especifique um ID usando uma <a href="https://docs.n8n.io/code/expressions/">expressão</a>'),
+      },
+      {
+        displayName: t('Value', 'Valor'),
+        name: 'valor',
+        type: 'string',
+        required: true,
+        default: '',
+        displayOptions: { show: { resource: ['contact'], operation: ['editByProperty'] } },
+        description: t('The value to set', 'O valor a ser definido'),
+      },
+
+      // ===== CAMPOS PARA EDIT DEAL BY PROPERTY =====
+      {
+        displayName: t('Deal Name or ID', 'Nome ou ID do Negócio'),
+        name: 'dealId',
+        type: 'number',
+        typeOptions: { minValue: 1 },
+        required: true,
+        default: '',
+        displayOptions: { show: { resource: ['deal'], operation: ['editByProperty'] } },
+        placeholder: '12345',
+        description: t('The deal to edit', 'O negócio a ser editado'),
+      },
+      {
+        displayName: t('Property', 'Propriedade'),
+        name: 'propriedade',
+        type: 'options',
+        typeOptions: { loadOptionsMethod: 'getDealProperties' },
+        required: true,
+        default: '',
+        displayOptions: { show: { resource: ['deal'], operation: ['editByProperty'] } },
+        description: t('Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>', 'Escolha da lista, ou especifique um ID usando uma <a href="https://docs.n8n.io/code/expressions/">expressão</a>'),
+      },
+      {
+        displayName: t('Value', 'Valor'),
+        name: 'valor',
+        type: 'string',
+        required: true,
+        default: '',
+        displayOptions: { show: { resource: ['deal'], operation: ['editByProperty'] } },
+        description: t('The value to set', 'O valor a ser definido'),
+      },
+
+      // ===== CAMPOS PARA CREATE TASK =====
+      {
+        displayName: t('Title', 'Titulo'),
+        name: 'titulo',
+        type: 'string',
+        required: true,
+        default: '',
+        displayOptions: { show: { resource: ['task'], operation: ['create'] } },
+        description: t('Task title', 'Título da tarefa'),
+      },
+      {
+        displayName: t('Description', 'Descricao'),
+        name: 'descricao',
+        type: 'string',
+        typeOptions: { rows: 3 },
+        default: '',
+        displayOptions: { show: { resource: ['task'], operation: ['create'] } },
+        description: t('Task description', 'Descrição da tarefa'),
+      },
+      {
+        displayName: t('Data Inicial', 'Data Inicial'),
+        name: 'dataInicial',
+        type: 'string',
+        default: '',
+        displayOptions: { show: { resource: ['task'], operation: ['create'] } },
+        description: t('Initial date', 'Data inicial'),
+      },
+      {
+        displayName: t('Data Entrega', 'Data Entrega'),
+        name: 'dataEntrega',
+        type: 'string',
+        default: '',
+        displayOptions: { show: { resource: ['task'], operation: ['create'] } },
+        description: t('Delivery date', 'Data de entrega'),
+      },
+      {
+        displayName: t('Projeto ID', 'Projeto ID'),
+        name: 'projetoId',
+        type: 'number',
+        required: true,
+        default: '',
+        displayOptions: { show: { resource: ['task'], operation: ['create'] } },
+        placeholder: '12345',
+        description: t('The project to create a task for', 'O projeto para criar uma tarefa'),
+      },
+      {
+        displayName: t('Status ID', 'Status ID'),
+        name: 'statusId',
+        type: 'options',
+        typeOptions: { loadOptionsMethod: 'getTaskStatuses' },
+        required: true,
+        default: '',
+        displayOptions: { show: { resource: ['task'], operation: ['create'] } },
+        description: 'Task status. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+      },
+      {
+        displayName: 'Task Type Name or ID',
+        name: 'taskTypeId',
+        type: 'options',
+        typeOptions: { loadOptionsMethod: 'getTaskTypes' }, // Supondo que haja um endpoint para tipos de tarefas
+        required: true,
+        default: '',
+        displayOptions: { show: { resource: ['task'], operation: ['create'] } },
+        description: 'Task type. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+      },
+      {
+        displayName: 'User Name or ID',
+        name: 'userIds',
+        type: 'options',
+        typeOptions: { loadOptionsMethod: 'getResponsibles' },
+        required: true,
+        default: '',
+        displayOptions: { show: { resource: ['task'], operation: ['create'] } },
+        description: 'User IDs assigned to the task. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+      },
+
+      // Additional fields for Create Task
+      {
+        displayName: 'Additional Fields',
+        name: 'additionalFields',
+        type: 'collection',
+        placeholder: 'Add Field',
+        default: {},
+        displayOptions: { show: { resource: ['task'], operation: ['create'] } },
+        options: [
+          {
+            displayName: 'Start Date',
+            name: 'startDate',
+            type: 'string',
+            default: '',
+            placeholder: '2024-01-01',
+            description: 'Start date (YYYY-MM-DD)',
+          },
+          {
+            displayName: 'Delivery Date',
+            name: 'deliveryDate',
+            type: 'string',
+            default: '',
+            placeholder: '2024-12-31',
+            description: 'Delivery date (YYYY-MM-DD)',
+          },
+        ],
+      },
+
+      // ===== CAMPOS PARA SEARCH TASKS =====
+      {
+        displayName: 'Deal Name or ID',
+        name: 'dealId',
+        type: 'string',
+        default: '',
+        displayOptions: { show: { resource: ['task'], operation: ['search'] } },
+        placeholder: '12345 or Deal Name',
+        description: 'Filter tasks by deal, or leave empty to search all tasks',
+      },
+
+      // ===== CAMPOS PARA ADD TAGS =====
+      {
+        displayName: 'Negocio Id',
+        name: 'dealId',
+        type: 'number',
+        typeOptions: { minValue: 1 },
+        required: true,
+        default: '',
+        displayOptions: { show: { resource: ['tag'], operation: ['add'] } },
+        placeholder: '12345',
+        description: 'The deal ID to add tags to',
+      },
+      {
+        displayName: 'Etiquetas',
+        name: 'tagIds',
+        type: 'options',
+        typeOptions: { loadOptionsMethod: 'getTags' },
+        required: true,
+        default: '',
+        displayOptions: { show: { resource: ['tag'], operation: ['add'] } },
+        description: 'Tags to add to the deal. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+      },
+
+      // ===== CAMPOS PARA SEND WHATSAPP =====
+      {
+        displayName: 'Contato Id',
+        name: 'leadId',
+        type: 'number',
+        typeOptions: { minValue: 1 },
+        required: true,
+        default: '',
+        displayOptions: { show: { resource: ['whatsapp'], operation: ['send'] } },
+        placeholder: '12345',
+        description: 'The contact ID to send message to',
+      },
+      {
+        displayName: 'Mensagem',
+        name: 'mensagem',
+        type: 'string',
+        typeOptions: { rows: 4 },
+        required: true,
+        default: '',
+        displayOptions: { show: { resource: ['whatsapp'], operation: ['send'] } },
+        placeholder: 'Enter your message here...',
+        description: 'The message to send',
+      },
+      {
+        displayName: 'Celular',
+        name: 'celular',
+        type: 'string',
+        default: '',
+        displayOptions: { show: { resource: ['whatsapp'], operation: ['send'] } },
+        placeholder: '+55 11 99999-9999',
+        description: 'Direct phone number',
+      },
+      {
+        displayName: 'Url da Imagem',
+        name: 'urlImagem',
+        type: 'string',
+        default: '',
+        displayOptions: { show: { resource: ['whatsapp'], operation: ['send'] } },
+        placeholder: 'https://example.com/image.jpg',
+        description: 'Image attachment URL',
+      },
+      {
+        displayName: 'Url do Audio',
+        name: 'urlAudio',
+        type: 'string',
+        default: '',
+        displayOptions: { show: { resource: ['whatsapp'], operation: ['send'] } },
+        placeholder: 'https://example.com/audio.mp3',
+        description: 'Audio attachment URL',
+      },
+      {
+        displayName: 'Url do Video',
+        name: 'urlVideo',
+        type: 'string',
+        default: '',
+        displayOptions: { show: { resource: ['whatsapp'], operation: ['send'] } },
+        placeholder: 'https://example.com/video.mp4',
+        description: 'Video attachment URL',
+      },
+      {
+        displayName: 'Url do Documento',
+        name: 'urlDocumento',
+        type: 'string',
+        default: '',
+        displayOptions: { show: { resource: ['whatsapp'], operation: ['send'] } },
+        placeholder: 'https://example.com/document.pdf',
+        description: 'Document attachment URL',
+      },
+      {
+        displayName: 'Enviar para Pré Vendedor',
+        name: 'preVendedor',
+        type: 'boolean',
+        default: false,
+        displayOptions: { show: { resource: ['whatsapp'], operation: ['send'] } },
+        description: 'Whether to send to Pre-Seller',
+      },
+      {
+        displayName: 'Enviar para Vendedor',
+        name: 'vendedor',
+        type: 'boolean',
+        default: false,
+        displayOptions: { show: { resource: ['whatsapp'], operation: ['send'] } },
+        description: 'Whether to send to Seller',
+      },
+      {
+        displayName: 'Enviar para Técnico',
+        name: 'tecnico',
+        type: 'boolean',
+        default: false,
+        displayOptions: { show: { resource: ['whatsapp'], operation: ['send'] } },
+        description: 'Whether to send to Technician',
+      },
+      {
+        displayName: 'Enviar para Lead',
+        name: 'lead',
+        type: 'boolean',
+        default: false,
+        displayOptions: { show: { resource: ['whatsapp'], operation: ['send'] } },
+        description: 'Whether to send to Lead',
+      },
     ],
   };
 
@@ -129,49 +1472,13 @@ export class Groner {
       getOrigins,
       getResponsibles,
       getDealTypes,
+      getEtapas,
       getTags,
       getStores,
-      getEtapas,
-      getTaskTypes,
       getTaskStatuses,
-      getContactProperties,
+      getTaskTypes,
       getDealProperties,
-    }
+      getContactProperties,
+    },
   };
-
-  async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
-    const operation = this.getNodeParameter('operation', 0) as OperationKey;
-    const items = this.getInputData();
-    const returnData: INodeExecutionData[] = [];
-
-    if (!CONFIG.operations.executors.has(operation)) {
-      throw new NodeOperationError(
-        this.getNode(),
-        `Unsupported operation: ${operation}. Available: ${Array.from(CONFIG.operations.executors.keys()).join(', ')}`
-      );
-    }
-
-    for (let i = 0; i < items.length; i++) {
-      try {
-        const credentials = await this.getCredentials(CONFIG.node.credentials);
-        const responseData = await CONFIG.operations.executors.get(operation)!.call(this, i, items, credentials);
-
-        returnData.push(...this.helpers.constructExecutionMetaData(
-          this.helpers.returnJsonArray(responseData),
-          { itemData: { item: i } },
-        ));
-      } catch (error) {
-        if (this.continueOnFail()) {
-          returnData.push(...this.helpers.constructExecutionMetaData(
-            this.helpers.returnJsonArray({ error: error.message }),
-            { itemData: { item: i } },
-          ));
-          continue;
-        }
-        throw error;
-      }
-    }
-
-    return [returnData];
-  }
 }
