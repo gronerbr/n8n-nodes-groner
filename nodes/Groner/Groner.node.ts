@@ -12,20 +12,17 @@ import { getTaskTypes } from './loadOptions/getTaskTypes.js';
 import { getDealProperties } from './loadOptions/getDealProperties.js';
 import { getContactProperties } from './loadOptions/getContactProperties.js';
 
-// Bilingual function to switch between English and Portuguese
-const t = (en: string, pt: string, usePortuguese: boolean = true) => {
-  return usePortuguese ? pt : en;
-};
+
 
 export class Groner implements INodeType {
   description: INodeTypeDescription = {
-    displayName: t('Groner', 'Groner'),
+    displayName: 'Groner',
     name: 'groner',
     icon: 'file:logogroner.svg',
     group: ['transform'],
     version: 1,
     subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
-    description: t('Integrate with Groner CRM to manage deals, contacts, tasks, and more', 'Integrar com o Groner CRM para gerenciar negócios, contatos, tarefas e mais'),
+    description: 'Integrate with Groner CRM to manage deals, contacts, tasks, and more',
     defaults: { name: 'Groner' },
     inputs: [NodeConnectionType.Main],
 		outputs: [NodeConnectionType.Main],
@@ -41,14 +38,14 @@ export class Groner implements INodeType {
         type: 'options',
         noDataExpression: true,
         options: [
-          { name: t('Contact', 'Contato'), value: 'contact' },
-          { name: t('Deal', 'Negócio'), value: 'deal' },
-          { name: t('Note', 'Nota'), value: 'note' },
-          { name: t('Tag', 'Etiqueta'), value: 'tag' },
-          { name: t('Task', 'Tarefa'), value: 'task' },
-          { name: t('WhatsApp', 'WhatsApp'), value: 'whatsapp' },
+          { name: 'Contact', value: 'contact' },
+          { name: 'Deal', value: 'deal' },
+          { name: 'Note', value: 'note' },
+          { name: 'Tag', value: 'tag' },
+          { name: 'Task', value: 'task' },
+          { name: 'WhatsApp', value: 'whatsapp' },
         ],
-        default: undefined,
+        default: 'contact',
       },
 
       // Operation selector for Deals
@@ -60,10 +57,10 @@ export class Groner implements INodeType {
         displayOptions: { show: { resource: ['deal'] } },
         options: [
           {
-            name: t('Create', 'Criar'),
+            name: 'Create',
             value: 'create',
-            action: t('Create a new deal', 'Criar um novo negócio'),
-            description: t('Create a new deal in Groner', 'Criar um novo negócio no Groner'),
+            action: 'Create a new deal',
+            description: 'Create a new deal in Groner',
             routing: {
               request: {
                 method: 'POST',
@@ -96,10 +93,10 @@ export class Groner implements INodeType {
             },
           },
           {
-            name: t('Edit', 'Editar'),
+            name: 'Edit',
             value: 'edit',
-            action: t('Edit a deal', 'Editar um negócio'),
-            description: t('Edit an existing deal', 'Editar um negócio existente'),
+            action: 'Edit a deal',
+            description: 'Edit an existing deal',
             routing: {
               request: {
                 method: 'PUT',
@@ -128,10 +125,10 @@ export class Groner implements INodeType {
             },
           },
           {
-            name: t('Edit by Property', 'Editar por Propriedade'),
+            name: 'Edit by Property',
             value: 'editByProperty',
-            action: t('Edit deal by property', 'Editar negócio por propriedade'),
-            description: t('Edit deal by specific property', 'Editar negócio por propriedade específica'),
+            action: 'Edit deal by property',
+            description: 'Edit deal by specific property',
             routing: {
               request: {
                 method: 'PUT',
@@ -144,10 +141,10 @@ export class Groner implements INodeType {
             },
           },
           {
-            name: t('Get Quote', 'Obter Orçamento'),
+            name: 'Get Quote',
             value: 'getQuote',
-            action: t('Get deal quote', 'Obter orçamento do negócio'),
-            description: t('Get quote information for a deal', 'Obter informações de orçamento para um negócio'),
+            action: 'Get deal quote',
+            description: 'Get quote information for a deal',
             routing: {
               request: {
                 method: 'GET',
@@ -160,10 +157,10 @@ export class Groner implements INodeType {
             },
           },
           {
-            name: t('Move', 'Mover'),
+            name: 'Move',
             value: 'move',
-            action: t('Move a deal', 'Mover um negócio'),
-            description: t('Move a deal to a different stage', 'Mover um negócio para um estágio diferente'),
+            action: 'Move a deal',
+            description: 'Move a deal to a different stage',
             routing: {
               request: {
                 method: 'POST',
@@ -175,10 +172,10 @@ export class Groner implements INodeType {
             },
           },
           {
-            name: t('Search', 'Pesquisar'),
+            name: 'Search',
             value: 'search',
-            action: t('Search for deals', 'Pesquisar negócios'),
-            description: t('Search deals with filters', 'Pesquisar negócios com filtros'),
+            action: 'Search for deals',
+            description: 'Search deals with filters',
             routing: {
               request: {
                 method: 'GET',
@@ -234,7 +231,7 @@ export class Groner implements INodeType {
             },
           },
         ],
-        default: undefined,
+        default: 'create',
       },
 
       // Operation selector for Contacts
@@ -246,10 +243,10 @@ export class Groner implements INodeType {
         displayOptions: { show: { resource: ['contact'] } },
         options: [
           {
-            name: t('Edit', 'Editar'),
+            name: 'Edit',
             value: 'edit',
-            action: t('Edit contact', 'Editar contato'),
-            description: t('Edit contact information', 'Editar informações do contato'),
+            action: 'Edit contact',
+            description: 'Edit contact information',
             routing: {
               request: {
                 method: 'PUT',
@@ -267,10 +264,10 @@ export class Groner implements INodeType {
             },
           },
           {
-            name: t('Edit by Property', 'Editar por Propriedade'),
+            name: 'Edit by Property',
             value: 'editByProperty',
-            action: t('Edit contact by property', 'Editar contato por propriedade'),
-            description: t('Edit contact by specific property', 'Editar contato por propriedade específica'),
+            action: 'Edit contact by property',
+            description: 'Edit contact by specific property',
             routing: {
               request: {
                 method: 'PUT',
@@ -283,7 +280,7 @@ export class Groner implements INodeType {
             },
           },
         ],
-        default: undefined,
+        default: 'edit',
       },
 
       // Operation selector for Tasks
@@ -295,10 +292,10 @@ export class Groner implements INodeType {
         displayOptions: { show: { resource: ['task'] } },
         options: [
           {
-            name: t('Create', 'Criar'),
+            name: 'Create',
             value: 'create',
-            action: t('Create a task', 'Criar uma tarefa'),
-            description: t('Create a new task', 'Criar uma nova tarefa'),
+            action: 'Create a task',
+            description: 'Create a new task',
             routing: {
               request: {
                 method: 'POST',
@@ -321,10 +318,10 @@ export class Groner implements INodeType {
             },
           },
           {
-            name: t('Search', 'Pesquisar'),
+            name: 'Search',
             value: 'search',
-            action: t('Search tasks', 'Pesquisar tarefas'),
-            description: t('Search for tasks', 'Pesquisar tarefas'),
+            action: 'Search tasks',
+            description: 'Search for tasks',
             routing: {
               request: {
                 method: 'GET',
@@ -363,10 +360,10 @@ export class Groner implements INodeType {
         displayOptions: { show: { resource: ['note'] } },
         options: [
           {
-            name: t('Add', 'Adicionar'),
+            name: 'Add',
             value: 'add',
-            action: t('Add a note', 'Adicionar uma nota'),
-            description: t('Add a note to a deal', 'Adicionar uma nota a um negócio'),
+            action: 'Add a note',
+            description: 'Add a note to a deal',
             routing: {
               request: {
                 method: 'POST',
@@ -379,7 +376,7 @@ export class Groner implements INodeType {
             },
           },
         ],
-        default: undefined,
+        default: 'add',
       },
 
       // Operation selector for Tags
@@ -391,10 +388,10 @@ export class Groner implements INodeType {
         displayOptions: { show: { resource: ['tag'] } },
         options: [
           {
-            name: t('Add', 'Adicionar'),
+            name: 'Add',
             value: 'add',
-            action: t('Add tags', 'Adicionar etiquetas'),
-            description: t('Add tags to a deal', 'Adicionar etiquetas a um negócio'),
+            action: 'Add tags',
+            description: 'Add tags to a deal',
             routing: {
               request: {
                 method: 'POST',
@@ -404,7 +401,7 @@ export class Groner implements INodeType {
             },
           },
         ],
-        default: undefined,
+        default: 'add',
       },
 
       // Operation selector for WhatsApp
@@ -416,10 +413,10 @@ export class Groner implements INodeType {
         displayOptions: { show: { resource: ['whatsapp'] } },
         options: [
           {
-            name: t('Send', 'Enviar'),
+            name: 'Send',
             value: 'send',
-            action: t('Send whats app message', 'Enviar mensagem WhatsApp'),
-            description: t('Send a WhatsApp message', 'Enviar uma mensagem WhatsApp'),
+            action: 'Send whats app message',
+            description: 'Send a WhatsApp message',
             routing: {
               request: {
                 method: 'POST',
@@ -441,7 +438,7 @@ export class Groner implements INodeType {
             },
           },
         ],
-        default: undefined,
+        default: 'send',
       },
 
       // ===== CAMPOS PARA CREATE DEAL =====
@@ -1161,7 +1158,7 @@ export class Groner implements INodeType {
 
       // ===== CAMPOS PARA EDIT CONTACT BY PROPERTY =====
       {
-        displayName: t('Contact Name or ID', 'Nome ou ID do Contato'),
+        displayName: 'Contact Name or ID',
         name: 'contactId',
         type: 'number',
         typeOptions: { minValue: 1 },
@@ -1169,31 +1166,31 @@ export class Groner implements INodeType {
         default: '',
         displayOptions: { show: { resource: ['contact'], operation: ['editByProperty'] } },
         placeholder: '12345',
-        description: t('The contact to edit', 'O contato a ser editado'),
+        description: 'The contact to edit',
       },
       {
-        displayName: t('Property', 'Propriedade'),
+        displayName: 'Property Name or ID',
         name: 'propriedade',
         type: 'options',
         typeOptions: { loadOptionsMethod: 'getContactProperties' },
         required: true,
         default: '',
         displayOptions: { show: { resource: ['contact'], operation: ['editByProperty'] } },
-        description: t('Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>', 'Escolha da lista, ou especifique um ID usando uma <a href="https://docs.n8n.io/code/expressions/">expressão</a>'),
+        description: 'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
       },
       {
-        displayName: t('Value', 'Valor'),
+        displayName: 'Value',
         name: 'valor',
         type: 'string',
         required: true,
         default: '',
         displayOptions: { show: { resource: ['contact'], operation: ['editByProperty'] } },
-        description: t('The value to set', 'O valor a ser definido'),
+        description: 'The value to set',
       },
 
       // ===== CAMPOS PARA EDIT DEAL BY PROPERTY =====
       {
-        displayName: t('Deal Name or ID', 'Nome ou ID do Negócio'),
+        displayName: 'Deal Name or ID',
         name: 'dealId',
         type: 'number',
         typeOptions: { minValue: 1 },
@@ -1201,75 +1198,75 @@ export class Groner implements INodeType {
         default: '',
         displayOptions: { show: { resource: ['deal'], operation: ['editByProperty'] } },
         placeholder: '12345',
-        description: t('The deal to edit', 'O negócio a ser editado'),
+        description: 'The deal to edit',
       },
       {
-        displayName: t('Property', 'Propriedade'),
+        displayName: 'Property Name or ID',
         name: 'propriedade',
         type: 'options',
         typeOptions: { loadOptionsMethod: 'getDealProperties' },
         required: true,
         default: '',
         displayOptions: { show: { resource: ['deal'], operation: ['editByProperty'] } },
-        description: t('Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>', 'Escolha da lista, ou especifique um ID usando uma <a href="https://docs.n8n.io/code/expressions/">expressão</a>'),
+        description: 'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
       },
       {
-        displayName: t('Value', 'Valor'),
+        displayName: 'Value',
         name: 'valor',
         type: 'string',
         required: true,
         default: '',
         displayOptions: { show: { resource: ['deal'], operation: ['editByProperty'] } },
-        description: t('The value to set', 'O valor a ser definido'),
+        description: 'The value to set',
       },
 
       // ===== CAMPOS PARA CREATE TASK =====
       {
-        displayName: t('Title', 'Titulo'),
+        displayName: 'Title',
         name: 'titulo',
         type: 'string',
         required: true,
         default: '',
         displayOptions: { show: { resource: ['task'], operation: ['create'] } },
-        description: t('Task title', 'Título da tarefa'),
+        description: 'Task title',
       },
       {
-        displayName: t('Description', 'Descricao'),
+        displayName: 'Description',
         name: 'descricao',
         type: 'string',
         typeOptions: { rows: 3 },
         default: '',
         displayOptions: { show: { resource: ['task'], operation: ['create'] } },
-        description: t('Task description', 'Descrição da tarefa'),
+        description: 'Task description',
       },
       {
-        displayName: t('Data Inicial', 'Data Inicial'),
+        displayName: 'Data Inicial',
         name: 'dataInicial',
         type: 'string',
         default: '',
         displayOptions: { show: { resource: ['task'], operation: ['create'] } },
-        description: t('Initial date', 'Data inicial'),
+        description: 'Initial date',
       },
       {
-        displayName: t('Data Entrega', 'Data Entrega'),
+        displayName: 'Data Entrega',
         name: 'dataEntrega',
         type: 'string',
         default: '',
         displayOptions: { show: { resource: ['task'], operation: ['create'] } },
-        description: t('Delivery date', 'Data de entrega'),
+        description: 'Delivery date',
       },
       {
-        displayName: t('Projeto ID', 'Projeto ID'),
+        displayName: 'Projeto ID',
         name: 'projetoId',
         type: 'number',
         required: true,
         default: '',
         displayOptions: { show: { resource: ['task'], operation: ['create'] } },
         placeholder: '12345',
-        description: t('The project to create a task for', 'O projeto para criar uma tarefa'),
+        description: 'The project to create a task for',
       },
       {
-        displayName: t('Status ID', 'Status ID'),
+        displayName: 'Status Name or ID',
         name: 'statusId',
         type: 'options',
         typeOptions: { loadOptionsMethod: 'getTaskStatuses' },
