@@ -92,38 +92,7 @@ export class Groner implements INodeType {
               },
             },
           },
-          {
-            name: 'Edit',
-            value: 'edit',
-            action: 'Edit a deal',
-            description: 'Edit an existing deal',
-            routing: {
-              request: {
-                method: 'PUT',
-                url: '=/api/projeto/{{$parameter["dealId"]}}',
-                body: {
-                  name: '={{$parameter["name"]}}',
-                  email: '={{$parameter["email"]}}',
-                  phone: '={{$parameter["phone"]}}',
-                  city: '={{$parameter["additionalFields.city"]}}',
-                  document: '={{$parameter["additionalFields.document"]}}',
-                  personType: '={{$parameter["additionalFields.personType"]}}',
-                  state: '={{$parameter["additionalFields.state"]}}',
-                  accountValue: '={{$parameter["additionalFields.accountValue"]}}',
-                  responsibleId: '={{$parameter["additionalFields.responsibleId"]}}',
-                  responsibleEmail: '={{$parameter["additionalFields.responsibleEmail"]}}',
-                  note: '={{$parameter["additionalFields.note"]}}',
-                  campaign: '={{$parameter["additionalFields.campaign"]}}',
-                  ad: '={{$parameter["additionalFields.advertisement"]}}',
-                  adSet: '={{$parameter["additionalFields.adSet"]}}',
-                  leadTrackingCode: '={{$parameter["additionalFields.leadTrackingCode"]}}',
-                  tradeName: '={{$parameter["additionalFields.tradeName"]}}',
-                  segment: '={{$parameter["additionalFields.segment"]}}',
-                  dealType: '={{$parameter["additionalFields.dealTypeId"]}}',
-                },
-              },
-            },
-          },
+
           {
             name: 'Edit by Property',
             value: 'editByProperty',
@@ -448,7 +417,7 @@ export class Groner implements INodeType {
         type: 'string',
         required: true,
         default: '',
-        displayOptions: { show: { resource: ['deal'], operation: ['create', 'edit'] } },
+        displayOptions: { show: { resource: ['deal'], operation: ['create'] } },
         description: 'Lead/deal name',
       },
       {
@@ -458,7 +427,7 @@ export class Groner implements INodeType {
         required: true,
         default: '',
         placeholder: 'john.doe@example.com',
-        displayOptions: { show: { resource: ['deal'], operation: ['create', 'edit'] } },
+        displayOptions: { show: { resource: ['deal'], operation: ['create'] } },
         description: 'Lead email address',
       },
       {
@@ -468,7 +437,7 @@ export class Groner implements INodeType {
         required: true,
         default: '',
         placeholder: '+55 11 99999-9999',
-        displayOptions: { show: { resource: ['deal'], operation: ['create', 'edit'] } },
+        displayOptions: { show: { resource: ['deal'], operation: ['create'] } },
         description: 'Lead phone number',
       },
       {
@@ -481,14 +450,14 @@ export class Groner implements INodeType {
         description: 'Lead origin. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
       },
 
-      // Additional fields for Create and Edit Deal
+      // Additional fields for Create Deal
       {
         displayName: 'Additional Fields',
         name: 'additionalFields',
         type: 'collection',
         placeholder: 'Add Field',
         default: {},
-        displayOptions: { show: { resource: ['deal'], operation: ['create', 'edit'] } },
+        displayOptions: { show: { resource: ['deal'], operation: ['create'] } },
         options: [
           {
             displayName: 'Account Value',
@@ -1055,6 +1024,14 @@ export class Groner implements INodeType {
         displayOptions: { show: { resource: ['deal'], operation: ['move'] } },
         description: 'The status to move the deal to. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
       },
+      {
+        displayName: 'Validar Status Disponíveis',
+        name: 'validaStatusDisponivel',
+        type: 'boolean',
+        default: false,
+        displayOptions: { show: { resource: ['deal'], operation: ['move'] } },
+        description: 'Whether to validate available statuses before moving the deal',
+      },
 
       // ===== CAMPOS PARA GET QUOTE =====
       {
@@ -1068,17 +1045,7 @@ export class Groner implements INodeType {
         description: 'The deal to get quote for',
       },
 
-      // ===== CAMPOS PARA EDIT DEAL =====
-      {
-        displayName: 'Deal Name or ID',
-        name: 'dealId',
-        type: 'string',
-        required: true,
-        default: '',
-        displayOptions: { show: { resource: ['deal'], operation: ['edit'] } },
-        placeholder: '12345 or Deal Name',
-        description: 'The deal to edit',
-      },
+
 
       // ===== CAMPOS PARA EDIT CONTACT =====
       {
