@@ -1,0 +1,20 @@
+COMANDOS PARA DEBUG DE REQUESTS HTTP:
+
+OPCAO 1 - DEBUG GERAL:
+$env:N8N_LOG_LEVEL = "debug"; $env:N8N_LOG_OUTPUT = "console"; $env:DEBUG = "n8n:*"; n8n
+
+OPCAO 2 - DEBUG ESPECIFICO HTTP:
+$env:N8N_LOG_LEVEL = "debug"; $env:N8N_LOG_OUTPUT = "console"; $env:DEBUG = "n8n:*,axios:*"; n8n
+
+OPCAO 3 - DEBUG COMPLETO HTTP:
+$env:N8N_LOG_LEVEL = "debug"; $env:N8N_LOG_OUTPUT = "console"; $env:DEBUG = "n8n:*,axios:*,http:*,https:*"; $env:NODE_DEBUG = "http,https"; n8n
+
+OU EXECUTE CADA LINHA SEPARADAMENTE:
+
+$env:N8N_LOG_LEVEL = "debug"
+$env:N8N_LOG_OUTPUT = "console"
+$env:DEBUG = "n8n:*,axios:*,http:*,https:*"
+$env:NODE_DEBUG = "http,https"
+n8n
+
+ISSO VAI MOSTRAR TODOS OS REQUESTS HTTP NO CONSOLE!

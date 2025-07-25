@@ -1,0 +1,32 @@
+COMANDO PARA DEBUG DO STATUSID:
+
+1. Pare o n8n atual (Ctrl+C)
+
+2. Execute este comando:
+node -r .\debug-status.js (Get-Command n8n).Source
+
+3. Abra o n8n: http://localhost:5678
+
+4. Configure o node Groner com:
+   - Resource: Deal
+   - Operation: Search
+   - Status Name or ID: Selecione um status
+
+5. Execute o workflow
+
+6. Veja no console os requests para api.groner.app
+
+O QUE PROCURAR:
+- Se o statusId está sendo enviado no request
+- Se o valor está correto
+- Se a API está retornando dados filtrados
+
+EXEMPLO DO QUE DEVE APARECER:
+🌐 GRONER REQUEST: {
+  method: 'GET',
+  url: 'https://comercial.api.groner.app/api/projeto/cards',
+  params: { statusId: '123' },
+  ...
+}
+
+ISSO VAI MOSTRAR EXATAMENTE O QUE ESTA SENDO ENVIADO!

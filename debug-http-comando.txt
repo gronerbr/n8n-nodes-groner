@@ -1,0 +1,18 @@
+COMANDOS ESPECIFICOS PARA CAPTURAR REQUESTS HTTP:
+
+OPCAO 1 - DEBUG COMPLETO:
+$env:N8N_LOG_LEVEL = "debug"; $env:N8N_LOG_OUTPUT = "console"; $env:DEBUG = "n8n:*,axios:*,http:*,https:*"; $env:NODE_DEBUG = "http,https"; n8n
+
+OPCAO 2 - DEBUG AXIOS ESPECIFICO:
+$env:N8N_LOG_LEVEL = "debug"; $env:N8N_LOG_OUTPUT = "console"; $env:DEBUG = "axios:*"; n8n
+
+OPCAO 3 - DEBUG HTTP NATIVO:
+$env:NODE_DEBUG = "http,https"; n8n
+
+OPCAO 4 - DEBUG COM FILTRO:
+$env:N8N_LOG_LEVEL = "debug"; $env:N8N_LOG_OUTPUT = "console"; $env:DEBUG = "n8n:workflow,n8n:node"; n8n
+
+PARA VER APENAS REQUESTS HTTP, USE:
+$env:NODE_DEBUG = "http,https"; n8n
+
+ISSO VAI MOSTRAR TODOS OS REQUESTS HTTP NO CONSOLE!

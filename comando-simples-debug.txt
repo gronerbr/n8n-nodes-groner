@@ -1,0 +1,27 @@
+COMANDO SIMPLES PARA VER REQUESTS HTTP:
+
+1. Pare o n8n atual (Ctrl+C)
+
+2. Execute este comando:
+node --inspect-brk=0.0.0.0:9229 (Get-Command n8n).Source
+
+3. Abra o Chrome e vá para: chrome://inspect
+
+4. Clique em "Open dedicated DevTools for Node"
+
+5. No DevTools, vá para a aba "Network"
+
+6. Execute o workflow no n8n
+
+7. Veja os requests HTTP na aba Network
+
+ALTERNATIVA MAIS SIMPLES:
+
+1. Execute:
+$env:NODE_OPTIONS = "--inspect"; n8n
+
+2. Abra: http://localhost:9229
+
+3. Veja os requests no DevTools
+
+ISSO VAI MOSTRAR TODOS OS REQUESTS HTTP!
