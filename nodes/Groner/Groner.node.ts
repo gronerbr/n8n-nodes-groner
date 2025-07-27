@@ -212,27 +212,6 @@ export class Groner implements INodeType {
         displayOptions: { show: { resource: ['contact'] } },
         options: [
           {
-            name: 'Edit',
-            value: 'edit',
-            action: 'Edit contact',
-            description: 'Edit contact information',
-            routing: {
-              request: {
-                method: 'PUT',
-                url: '=/api/contato/{{$parameter["contactId"]}}',
-                body: {
-                  name: '={{$parameter["name"]}}',
-                  email: '={{$parameter["email"]}}',
-                  phone: '={{$parameter["phone"]}}',
-                  city: '={{$parameter["additionalFields.city"]}}',
-                  state: '={{$parameter["additionalFields.state"]}}',
-                  document: '={{$parameter["additionalFields.document"]}}',
-                  personType: '={{$parameter["additionalFields.personType"]}}',
-                },
-              },
-            },
-          },
-          {
             name: 'Edit by Property',
             value: 'editByProperty',
             action: 'Edit contact by property',
@@ -249,7 +228,7 @@ export class Groner implements INodeType {
             },
           },
         ],
-        default: 'edit',
+        default: 'editByProperty',
       },
 
       // Operation selector for Tasks
@@ -1042,72 +1021,7 @@ export class Groner implements INodeType {
 
 
 
-      // ===== CAMPOS PARA EDIT CONTACT =====
-      {
-        displayName: 'Contact Name or ID',
-        name: 'contactId',
-        type: 'string',
-        required: true,
-        default: '',
-        displayOptions: { show: { resource: ['contact'], operation: ['edit'] } },
-        placeholder: '12345 or Contact Name',
-        description: 'The contact to edit',
-      },
 
-      // Additional fields for Edit Contact
-      {
-        displayName: 'Additional Fields',
-        name: 'additionalFields',
-        type: 'collection',
-        placeholder: 'Add Field',
-        default: {},
-        displayOptions: { show: { resource: ['contact'], operation: ['edit'] } },
-        options: [
-          {
-            displayName: 'City',
-            name: 'city',
-            type: 'string',
-            default: '',
-            placeholder: 'São Paulo',
-            description: 'Contact city',
-          },
-          {
-            displayName: 'Contact Properties Name or ID',
-            name: 'contactProperties',
-            type: 'options',
-            typeOptions: { loadOptionsMethod: 'getContactProperties' },
-            default: '',
-            description: 'Additional contact properties. Choose from the list, or specify a property using an <a href="https://docs.n8n.io/code/expressions/">expression</a>. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
-          },
-          {
-            displayName: 'Document',
-            name: 'document',
-            type: 'string',
-            default: '',
-            placeholder: '123.456.789-00',
-            description: 'CPF/CNPJ number',
-          },
-          {
-            displayName: 'Person Type',
-            name: 'personType',
-            type: 'options',
-            options: [
-              { name: 'Individual', value: 'F' },
-              { name: 'Company', value: 'J' },
-            ],
-            default: 'F',
-            description: 'Type of person (Individual or Company)',
-          },
-          {
-            displayName: 'State',
-            name: 'state',
-            type: 'string',
-            default: '',
-            placeholder: 'SP',
-            description: 'Contact state (UF)',
-          },
-          ],
-        },
 
       // ===== CAMPOS PARA EDIT CONTACT BY PROPERTY =====
       {
