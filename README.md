@@ -10,21 +10,56 @@ This repository contains custom nodes for integrating n8n with the Groner API (S
 
 - **Groner**: Primary node for integration with the Groner API, covering all major CRM operations including lead management, project tracking, task creation, and WhatsApp messaging.
 
-## 📋 Available Operations
+## 📋 Available Resources and Operations
 
-| Operation | Description | HTTP Method | Endpoint |
-|-----------|-------------|-------------|----------|
-| **Create Deal** | Creates a new deal (lead/project) in Groner with comprehensive lead tracking capabilities. | POST | `/api/lead/FluentForm/{codOrigem}` |
-| **Search Deals** | Searches for deals (projects) with advanced filters and pagination support. | GET | `/api/projeto/cards` |
-| **Add Tags** | Adds labels (tags) to an existing deal for better organization and categorization. | POST | `/api/projeto/AlterarEtiquetas/{id}` |
-| **Add Note** | Adds a note/occurrence to a deal for tracking interactions and updates. | POST | `/api/negocio/{id}/ocorrencia` |
-| **Add Task** | Creates a new task linked to a deal with assignment and scheduling capabilities. | POST | `/api/tarefa` |
-| **Edit Contact By Property** | Edits specific properties of an existing contact (lead) for data updates. | PUT | `/api/lead/{id}` |
-| **Edit Deal By Property** | Edits specific properties of an existing deal (project) for status updates. | PUT | `/api/projeto/{id}` |
-| **Send WhatsApp Message** | Sends WhatsApp messages to leads/contacts through Groner's integrated messaging system. | POST | `/api/WhatsApp/enviarMensagem` |
-| **Move Deal** | Changes the status/stage of a deal in the sales pipeline. | PUT | `/api/negocio/{id}/status` |
-| **Get Deal Quote** | Retrieves quotes linked to a specific deal/project. | GET | `/api/orcamento/negocio/{projetoId}` |
-| **Search Tasks** | Searches for tasks with advanced filtering options and pagination. | GET | `/api/tarefa` |
+### 🔗 Available Resources
+
+| Resource | Description |
+|----------|-------------|
+| **Contact** | Contact/lead management |
+| **Deal** | Deal/project management |
+| **Note** | Note/occurrence addition |
+| **Tag** | Tag management |
+| **Task** | Task creation and search |
+| **WhatsApp** | WhatsApp message sending |
+
+### 📊 Operations by Resource
+
+#### **Deal (Deal/Project)**
+| Operation | Description | HTTP Method |
+|-----------|-------------|-------------|
+| **Create** | Creates a new deal (lead/project) in Groner | POST |
+| **Search** | Searches deals with advanced filters and pagination | GET |
+| **Edit by Property** | Edits specific properties of a deal | PUT |
+| **Get Quote** | Gets quotes for a specific deal | GET |
+| **Move** | Moves a deal to a different stage | POST |
+
+#### **Contact (Contact)**
+| Operation | Description | HTTP Method |
+|-----------|-------------|-------------|
+| **Edit** | Edits contact information | PUT |
+| **Edit by Property** | Edits specific properties of a contact | PUT |
+
+#### **Task (Task)**
+| Operation | Description | HTTP Method |
+|-----------|-------------|-------------|
+| **Create** | Creates a new task | POST |
+| **Search** | Searches tasks with filters | GET |
+
+#### **Note (Note)**
+| Operation | Description | HTTP Method |
+|-----------|-------------|-------------|
+| **Add** | Adds a note/occurrence to a deal | POST |
+
+#### **Tag (Tag)**
+| Operation | Description | HTTP Method |
+|-----------|-------------|-------------|
+| **Add** | Adds tags to a deal | POST |
+
+#### **WhatsApp**
+| Operation | Description | HTTP Method |
+|-----------|-------------|-------------|
+| **Send** | Sends WhatsApp message | POST |
 
 ---
 
@@ -110,9 +145,10 @@ https://{tenant}.api.groner.app/api/{endpoint}
 ### Basic Workflow Setup
 
 1. **Add the Node**: Drag and drop the **Groner** node into your n8n workflow
-2. **Select Operation**: Choose the desired operation from the "Operation" dropdown
-3. **Configure Parameters**: Fill in required and optional fields based on the selected operation
-4. **Execute**: Run the workflow to process the operation
+2. **Select Resource**: Choose the desired resource (Deal, Contact, Task, etc.)
+3. **Select Operation**: Choose the desired operation from the "Operation" dropdown
+4. **Configure Parameters**: Fill in required and optional fields based on the selected operation
+5. **Execute**: Run the workflow to process the operation
 
 ### Output Format
 - **Success**: Returns API response data as JSON
@@ -123,7 +159,7 @@ https://{tenant}.api.groner.app/api/{endpoint}
 
 ## 📖 Detailed Operation Guide
 
-### 1. Create Deal (Lead/Project)
+### 1. Create Deal
 
 Creates a new lead or project in Groner with comprehensive tracking capabilities.
 
@@ -131,14 +167,15 @@ Creates a new lead or project in Groner with comprehensive tracking capabilities
 - **Name** (`nome`): Full name of the contact
 - **Email** (`email`): Contact email address
 - **Phone** (`telefone`): Contact phone number
+- **Origin Name or ID** (`codOrigem`): Lead origin (loadOptions)
 
 #### Optional Fields
+- **Account Value** (`valorConta`): Estimated project value
 - **City** (`cidade`): Contact's city
 - **Document** (`documento`): CPF or CNPJ number
 - **Person Type** (`tipoPessoa`): PF (Individual) or PJ (Company)
 - **State** (`uf`): Brazilian state abbreviation
-- **Account Value** (`valorConta`): Estimated project value
-- **Responsible Name or ID** (`responsavelId`): Assigned salesperson (loadOptions)
+- **Responsible Name or ID** (`responsavelId`): Responsible salesperson (loadOptions)
 - **Responsible Email** (`emailResponsavel`): Salesperson email
 - **Note** (`nota`): Initial notes about the lead
 - **Campaign** (`campanha`): Marketing campaign identifier
@@ -148,8 +185,7 @@ Creates a new lead or project in Groner with comprehensive tracking capabilities
 - **Trade Name** (`nomeFantasia`): Company trade name (for PJ)
 - **Segment** (`segmento`): Business segment classification
 - **Deal Type Name or ID** (`tipoProjetoId`): Type of solar project (loadOptions)
-- **Origin Name or ID** (`codOrigem`): Lead source identifier (loadOptions)
-- **Custom URL** (`url`): Custom endpoint URL (optional)
+- **URL** (`url`): Custom endpoint URL (optional)
 
 #### Example Usage
 ```json
@@ -157,10 +193,11 @@ Creates a new lead or project in Groner with comprehensive tracking capabilities
   "nome": "John Doe",
   "email": "john.doe@example.com",
   "telefone": "+5511999999999",
+  "codOrigem": "1",
   "cidade": "São Paulo",
   "documento": "123.456.789-00",
-  "tipoPessoa": "PF",
-  "valorConta": "25000",
+  "tipoPessoa": "F",
+  "valorConta": 25000,
   "nota": "Interested in residential solar installation"
 }
 ```
@@ -170,41 +207,65 @@ Creates a new lead or project in Groner with comprehensive tracking capabilities
 Searches for existing deals with advanced filtering and pagination.
 
 #### Filter Parameters
-- **Quantity of Items** (`pageSize`): Items per page (default: 20)
+- **Page Size** (`pageSize`): Items per page (default: 20)
 - **Search** (`query`): Text search across deal data
 - **Criterio** (`criterio`): Search criteria
-- **Deal Type Name or ID** (`tipoProjetoId`): Filter by project type (loadOptions)
-- **Etapa Name or ID** (`etapaId`): Filter by sales pipeline stage (loadOptions)
-- **Status Name or ID** (`statusId`): Filter by status (loadOptions)
-- **Responsible Seller Name or ID** (`vendedorResponsavelId`): Filter by assigned seller (loadOptions)
-- **Responsible Technician Name or ID** (`tecnicoResponsavelId`): Filter by assigned technician (loadOptions)
-- **Pre Vendedor Name or ID** (`preVendedorId`): Filter by pre-seller (loadOptions)
-- **Lead ID** (`leadId`): Filter by specific lead
-- **Store Names or IDs** (`lojasIds`): Filter by store locations (multiOptions)
-- **City** (`cidade`): Filter by city
-- **UF** (`uf`): Filter by state
-- **Power Range** (`potenciaInicial`, `potenciaFinal`): Filter by power range in kW
-- **Value Range** (`valorInicial`, `valorFinal`): Filter by project value range
-- **Consumption Range** (`consumoInicial`, `consumoFinal`): Filter by consumption range in kWh
-- **Tag Names or IDs** (`etiquetasIds`): Filter by specific tags (multiOptions)
-- **Origin Names or IDs** (`origensIds`): Filter by origins (multiOptions)
-- **Status History IDs** (`statusHistoricoIds`, `nStatusHistoricoIds`): Filter by status history (multiOptions)
-- **Date Filters**: Multiple date range filters for different events
-- **Sort By** (`ordenarPor`): Sort criteria
-- **Qualification Range** (`qualificacaoInicial`, `qualificacaoFinal`): Filter by qualification (0-10)
-- **Indicator** (`indicador`): Performance indicator
-- **Contact Owner ID** (`donoContatoId`): Filter by contact owner
-- **Marketing Fields** (`campanha`, `anuncio`, `conjuntoAnuncios`): Filter by marketing data
+- **Filters**:
+  - **Deal Type ID** (`dealTypeId`): Filter by project type (loadOptions)
+  - **Stage ID** (`stageId`): Filter by sales pipeline stage (loadOptions)
+  - **Status ID** (`statusId`): Filter by status (loadOptions)
+  - **Responsible Seller ID** (`responsibleSellerId`): Filter by responsible seller (loadOptions)
+  - **Responsible Technician ID** (`responsibleTechnicianId`): Filter by responsible technician (loadOptions)
+  - **Pre Seller ID** (`preSellerId`): Filter by pre-seller (loadOptions)
+- **Additional Fields**:
+  - **Lead ID** (`leadId`): Filter by specific lead
+  - **Stores IDs** (`storesIds`): Filter by store locations (multiOptions)
+  - **Tags IDs** (`tagsIds`): Filter by specific tags (multiOptions)
+  - **Origins IDs** (`originsIds`): Filter by origins (multiOptions)
+  - **Status History IDs** (`statusHistoryIds`, `nStatusHistoryIds`): Filter by status history (multiOptions)
+  - **Order By** (`orderBy`): Sort criteria
+  - **Initial Qualification** (`initialQualification`): Initial qualification (0-10)
+  - **Final Qualification** (`finalQualification`): Final qualification (0-10)
+  - **Indicator** (`indicator`): Performance indicator
+  - **Contact Owner ID** (`contactOwnerId`): Filter by contact owner
+  - **Campaign** (`campaign`): Filter by campaign
+  - **Advertisement** (`advertisement`): Filter by advertisement
+  - **Ad Set** (`adSet`): Filter by ad set
+- **Location**:
+  - **City** (`city`): Filter by city
+  - **State** (`state`): Filter by state
+- **Financial**:
+  - **Initial Power** (`initialPower`): Initial power in kW
+  - **Final Power** (`finalPower`): Final power in kW
+  - **Initial Value** (`initialValue`): Initial project value
+  - **Final Value** (`finalValue`): Final project value
+  - **Initial Consumption** (`initialConsumption`): Initial consumption in kWh
+  - **Final Consumption** (`finalConsumption`): Final consumption in kWh
+- **Dates**:
+  - **Start Date** (`startDate`): Start date
+  - **End Date** (`endDate`): End date
+  - **Initial Closing Forecast Date** (`initialClosingForecastDate`): Initial closing forecast date
+  - **Final Closing Forecast Date** (`finalClosingForecastDate`): Final closing forecast date
+  - **Initial Proposal Date** (`initialProposalDate`): Initial proposal date
+  - **Final Proposal Date** (`finalProposalDate`): Final proposal date
+  - **Initial Sale Date** (`initialSaleDate`): Initial sale date
+  - **Final Sale Date** (`finalSaleDate`): Final sale date
+  - **Initial Loss Date** (`initialLossDate`): Initial loss date
+  - **Final Loss Date** (`finalLossDate`): Final loss date
 
 #### Example Usage
 ```json
 {
   "pageSize": 50,
   "query": "solar installation",
-  "etapaId": "1",
-  "statusId": "2",
-  "valorInicial": 10000,
-  "valorFinal": 50000
+  "filters": {
+    "stageId": "1",
+    "statusId": "2"
+  },
+  "financial": {
+    "initialValue": 10000,
+    "finalValue": 50000
+  }
 }
 ```
 
@@ -213,14 +274,14 @@ Searches for existing deals with advanced filtering and pagination.
 Adds organizational labels to existing deals.
 
 #### Required Fields
-- **Deal ID** (`id`): Deal ID
-- **Tag Names or IDs** (`etiquetas`): Array of tag names (multiOptions)
+- **Deal ID** (`dealId`): Deal ID
+- **Tag IDs** (`tagIds`): Array of tag IDs
 
 #### Example Usage
 ```json
 {
-  "id": "12345",
-  "etiquetas": ["VIP", "Solar", "High Priority"]
+  "dealId": "12345",
+  "tagIds": ["1", "2", "3"]
 }
 ```
 
@@ -229,7 +290,7 @@ Adds organizational labels to existing deals.
 Adds notes or occurrences to track deal interactions.
 
 #### Required Fields
-- **Deal ID** (`id`): Deal ID
+- **Deal ID** (`dealId`): Deal ID
 - **Occurrence** (`ocorrencia`): Note content
 
 #### Optional Fields
@@ -238,22 +299,22 @@ Adds notes or occurrences to track deal interactions.
 #### Example Usage
 ```json
 {
-  "id": "12345",
+  "dealId": "12345",
   "ocorrencia": "Customer requested quote for 10kW system",
   "marcacoes": "@sales_team"
 }
 ```
 
-### 5. Add Task
+### 5. Create Task
 
 Creates tasks linked to deals with assignment capabilities.
 
 #### Required Fields
 - **Title** (`titulo`): Task title
-- **Type Name or ID** (`tipoId`): Task type identifier (loadOptions)
-- **Status Name or ID** (`statusTarefaId`): Task status (loadOptions)
-- **Deal ID** (`projetoId`): Associated deal ID
-- **User Names or IDs** (`usuariosIds`): Assigned user IDs (multiOptions)
+- **Type ID** (`tipoId`): Task type identifier (loadOptions)
+- **Status ID** (`statusId`): Task status (loadOptions)
+- **Project ID** (`projetoId`): Associated deal ID
+- **Users IDs** (`usuariosIds`): Assigned user IDs (multiOptions)
 
 #### Optional Fields
 - **Description** (`descricao`): Task description
@@ -266,7 +327,7 @@ Creates tasks linked to deals with assignment capabilities.
   "titulo": "Follow up call",
   "descricao": "Call customer to discuss proposal",
   "tipoId": "1",
-  "statusTarefaId": "1",
+  "statusId": "1",
   "projetoId": 12345,
   "usuariosIds": ["user1", "user2"],
   "dataInicial": "2024-01-15",
@@ -274,43 +335,72 @@ Creates tasks linked to deals with assignment capabilities.
 }
 ```
 
-### 6. Edit Contact By Property
+### 6. Search Tasks
+
+Searches for tasks with comprehensive filtering options.
+
+#### Filter Parameters
+- **Page Size** (`pageSize`): Items per page (default: 20)
+- **Search** (`query`): Text search
+- **Additional Fields**:
+  - **Lead ID** (`leadId`): Filter by associated lead
+  - **Project ID** (`projetoId`): Filter by associated project
+  - **Type ID** (`tipoId`): Filter by task type (loadOptions)
+  - **Status ID** (`statusId`): Filter by task status (loadOptions)
+  - **User ID** (`usuarioId`): Filter by assigned user (loadOptions)
+  - **Stores IDs** (`lojasIds`): Filter by store locations (multiOptions)
+  - **Order By** (`ordenarPor`): Sort criteria
+  - **Start Date** (`dataInicial`): Filter by start date (YYYY-MM-DD)
+  - **End Date** (`dataFinal`): Filter by end date (YYYY-MM-DD)
+  - **Page Number** (`pageNumber`): Page number
+
+#### Example Usage
+```json
+{
+  "projetoId": 12345,
+  "statusId": "1",
+  "pageSize": 20,
+  "ordenarPor": "dataCriacao"
+}
+```
+
+### 7. Edit Contact by Property
 
 Updates specific properties of existing contacts.
 
 #### Required Fields
-- **Deal ID** (`id`): Contact/Lead ID (number)
-- **Property Name or ID** (`propriedade`): Property name to update (loadOptions)
+- **Contact ID** (`contactId`): Contact/Lead ID (number)
+- **Property** (`propriedade`): Property name to update (loadOptions)
 - **Value** (`valor`): New property value
 
 #### Example Usage
 ```json
 {
-  "id": 12345,
+  "contactId": 12345,
   "propriedade": "email",
   "valor": "new.email@example.com"
 }
 ```
 
-### 7. Edit Deal By Property
+### 8. Edit Deal by Property
 
 Updates specific properties of existing deals.
 
 #### Required Fields
-- **Deal ID** (`id`): Deal ID (number)
-- **Property Name or ID** (`propriedade`): Property name to update (loadOptions)
+- **Deal ID** (`dealId`): Deal ID (number)
+- **Property** (`propriedade`): Property name to update (loadOptions)
 - **Value** (`valor`): New property value
 
 #### Example Usage
 ```json
 {
-  "id": 12345,
+  "dealId": 12345,
   "propriedade": "valorConta",
   "valor": "30000"
 }
 ```
 
-### 8. Send WhatsApp Message
+### 9. Send WhatsApp Message
 
 Sends WhatsApp messages through Groner's integrated messaging system.
 
@@ -318,7 +408,7 @@ Sends WhatsApp messages through Groner's integrated messaging system.
 - **Message** (`mensagem`): Message content
 
 #### Optional Fields
-- **Contact ID** (`leadId`): Target lead ID (number)
+- **Lead ID** (`leadId`): Target lead ID (number)
 - **Phone** (`celular`): Direct phone number
 - **Image URL** (`urlImagem`): Image attachment URL
 - **Audio URL** (`urlAudio`): Audio attachment URL
@@ -339,27 +429,27 @@ Sends WhatsApp messages through Groner's integrated messaging system.
 }
 ```
 
-### 9. Move Deal
+### 10. Move Deal
 
 Changes the status/stage of a deal in the sales pipeline.
 
 #### Required Fields
-- **Deal ID** (`id`): Deal ID
-- **Status Name or ID** (`statusId`): New status identifier (loadOptions)
+- **Deal ID** (`dealId`): Deal ID
+- **Status ID** (`statusId`): New status identifier (loadOptions)
 
 #### Optional Fields
-- **Validate Status Availables** (`validateStatusAvailable`): Whether to validate if the status is available (boolean)
+- **Validate Status Available** (`validaStatusDisponivel`): Whether to validate if the status is available (boolean)
 
 #### Example Usage
 ```json
 {
-  "id": "12345",
+  "dealId": "12345",
   "statusId": "2",
-  "validateStatusAvailable": true
+  "validaStatusDisponivel": true
 }
 ```
 
-### 10. Get Deal Quote
+### 11. Get Deal Quote
 
 Retrieves quotes associated with a specific deal.
 
@@ -373,31 +463,42 @@ Retrieves quotes associated with a specific deal.
 }
 ```
 
-### 11. Search Tasks
+---
 
-Searches for tasks with comprehensive filtering options.
+## 🔄 Workflow Examples
 
-#### Filter Parameters
-- **Quantity of Items** (`pageSize`): Items per page (default: 20)
-- **Search** (`query`): Text search
-- **Type Name or ID** (`tipoId`): Filter by task type (loadOptions)
-- **Status Name or ID** (`statusId`): Filter by task status (loadOptions)
-- **User Name or ID** (`usuarioId`): Filter by assigned user (loadOptions)
-- **Lead ID** (`leadId`): Filter by associated lead
-- **Project ID** (`projetoId`): Filter by associated project
-- **Store Names or IDs** (`lojasIds`): Filter by store locations (multiOptions)
-- **Start Date** (`dataInicial`): Filter by start date (YYYY-MM-DD)
-- **End Date** (`dataFinal`): Filter by end date (YYYY-MM-DD)
-- **Sort By** (`ordenarPor`): Sort criteria
+### Example 1: Process Deals with Content.List
 
-#### Example Usage
-```json
-{
-  "projetoId": 12345,
-  "statusId": "1",
-  "pageSize": 20,
-  "ordenarPor": "dataCriacao"
-}
+This example shows how to use Content.List to process multiple deals:
+
+```
+[Groner: Search Deals] → [Content.List] → [Groner: Edit Deal] → [Result]
+```
+
+**Content.List Configuration:**
+```
+Input Data: {{ $json.data }}
+Output Field Name: deal
+```
+
+**Edit Deal Configuration:**
+```
+Resource: Deal
+Operation: Edit by Property
+Deal ID: {{ $json.deal.id }}
+Property: valorConta
+Value: {{ $json.deal.valorConta * 1.1 }}
+```
+
+### Example 2: Complete Follow-up Workflow
+
+```
+[Groner: Search Deals] → [IF] → [Groner: Add Note] → [Groner: Send WhatsApp]
+```
+
+**IF Condition:**
+```
+{{ $json.status === "Em Negociação" }}
 ```
 
 ---
@@ -423,7 +524,6 @@ n8n-nodes-groner/
 │   └── GronerApi.credentials.ts    # API authentication
 ├── nodes/
 │   └── Groner/
-│       ├── fields/                 # Field definitions
 │       ├── loadOptions/            # Dynamic options
 │       │   ├── getStatuses.ts      # Status options
 │       │   ├── getOrigins.ts       # Origin options
@@ -436,18 +536,6 @@ n8n-nodes-groner/
 │       │   ├── getTaskStatuses.ts  # Task status options
 │       │   ├── getContactProperties.ts # Contact property options
 │       │   └── getDealProperties.ts    # Deal property options
-│       ├── operations/             # Operation implementations
-│       │   ├── CreateDeal/         # Create deal operation
-│       │   ├── SearchDeals/        # Search deals operation
-│       │   ├── AddTags/            # Add tags operation
-│       │   ├── AddNote/            # Add note operation
-│       │   ├── AddTask/            # Add task operation
-│       │   ├── EditContact/        # Edit contact operation
-│       │   ├── EditDeal/           # Edit deal operation
-│       │   ├── SendWhatsApp/       # Send WhatsApp operation
-│       │   ├── MoveDeal/           # Move deal operation
-│       │   ├── GetDealQuote/       # Get deal quote operation
-│       │   └── SearchTasks/        # Search tasks operation
 │       ├── Groner.node.ts          # Main node file
 │       └── logogroner.svg          # Custom icon
 ├── package.json                    # Project configuration
@@ -533,12 +621,19 @@ For support and questions:
 
 ---
 
+## 🌐 Language Versions
+
+- **[English Version](README.md)** (Current)
+- **[Portuguese Version](README_PT.md)**
+
+---
+
 ## 🔄 Version History
 
-- **v0.1.9**: Current version with comprehensive CRM operations and updated field structure
-- **v0.1.8**: Added WhatsApp messaging capabilities
-- **v0.1.7**: Enhanced search and filtering options
-- **v0.1.6**: Improved error handling and validation
-- **v0.1.5**: Initial release with basic operations
+- **v0.1.18**: Current version with comprehensive CRM operations and updated field structure
+- **v0.1.17**: Added WhatsApp messaging capabilities
+- **v0.1.16**: Enhanced search and filtering options
+- **v0.1.15**: Improved error handling and validation
+- **v0.1.14**: Initial release with basic operations
 
 For detailed changelog, see the [GitHub releases](https://github.com/gronerbr/n8n-nodes-groner/releases).
