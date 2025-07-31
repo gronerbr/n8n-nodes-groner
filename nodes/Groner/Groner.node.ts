@@ -398,6 +398,14 @@ export class Groner implements INodeType {
         placeholder: 'Specific search criteria',
         description: 'Additional search criteria',
       },
+      {
+        displayName: 'Return Only List',
+        name: 'returnOnlyList',
+        type: 'boolean',
+        default: false,
+        displayOptions: { show: { resource: ['deal'], operation: ['search'] } },
+        description: 'Whether to return only the deals list instead of the full API response',
+      },
 
       // Filters section for Search Deals
       {
@@ -704,13 +712,6 @@ export class Groner implements INodeType {
             typeOptions: { loadOptionsMethod: 'getOrigins' },
             default: '',
             description: 'Filter by origin IDs. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
-          },
-          {
-            displayName: 'Return Only List',
-            name: 'returnOnlyList',
-            type: 'boolean',
-            default: false,
-            description: 'Whether to return only the deals list instead of the full API response',
           },
           {
             displayName: 'Sort By',
@@ -1352,7 +1353,7 @@ export class Groner implements INodeType {
             const financial = this.getNodeParameter('financial', i, {}) as any;
             const dates = this.getNodeParameter('dates', i, {}) as any;
             const additionalFields = this.getNodeParameter('additionalFields', i, {}) as any;
-            const returnOnlyList = additionalFields?.returnOnlyList || false;
+            const returnOnlyList = this.getNodeParameter('returnOnlyList', i) as boolean;
 
             const qs: any = {
               pageSize,
@@ -1415,7 +1416,7 @@ export class Groner implements INodeType {
               qs,
             });
             const rawResponse = handleResponse(response);
-            
+
             // Process response based on returnOnlyList parameter
             if (returnOnlyList && rawResponse && Array.isArray(rawResponse) && rawResponse.length > 0) {
               const firstResponse = rawResponse[0];
