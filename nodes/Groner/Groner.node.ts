@@ -1226,6 +1226,18 @@ export class Groner implements INodeType {
     const credentials = await this.getCredentials('gronerApi');
     const baseURL = `https://${credentials.tenant}.api.groner.app`;
 
+    // Helper function to handle JSON response
+    const handleResponse = (response: any) => {
+      if (typeof response === 'string') {
+        try {
+          return JSON.parse(response);
+        } catch (e) {
+          return response;
+        }
+      }
+      return response;
+    };
+
     for (let i = 0; i < items.length; i++) {
       try {
         const resource = this.getNodeParameter('resource', i) as string;
@@ -1266,7 +1278,7 @@ export class Groner implements INodeType {
               tipoProjetoId: additionalFields.tipoProjetoId || '',
             };
 
-            responseData = await this.helpers.requestWithAuthentication.call(this, 'gronerApi', {
+            const response = await this.helpers.requestWithAuthentication.call(this, 'gronerApi', {
               method: 'POST',
               url: `${baseURL}/api/lead/FluentForm/${codOrigem}`,
               headers: {
@@ -1274,6 +1286,7 @@ export class Groner implements INodeType {
               },
               body,
             });
+            responseData = handleResponse(response);
           }
 
           else if (operation === 'editByProperty') {
@@ -1281,7 +1294,7 @@ export class Groner implements INodeType {
             const propriedade = this.getNodeParameter('propriedade', i) as string;
             const valor = this.getNodeParameter('valor', i) as string;
 
-            responseData = await this.helpers.requestWithAuthentication.call(this, 'gronerApi', {
+            const response = await this.helpers.requestWithAuthentication.call(this, 'gronerApi', {
               method: 'PUT',
               url: `${baseURL}/api/projeto/${dealId}`,
               body: {
@@ -1289,12 +1302,13 @@ export class Groner implements INodeType {
                 valor,
               },
             });
+            responseData = handleResponse(response);
           }
 
           else if (operation === 'getQuote') {
             const dealId = this.getNodeParameter('dealId', i) as string;
 
-            responseData = await this.helpers.requestWithAuthentication.call(this, 'gronerApi', {
+            const response = await this.helpers.requestWithAuthentication.call(this, 'gronerApi', {
               method: 'GET',
               url: `${baseURL}/api/orcamento/unico/${dealId}?pageSize=5&pageNumber=1`,
               headers: {
@@ -1302,6 +1316,7 @@ export class Groner implements INodeType {
                 'Accept': 'application/json',
               },
             });
+            responseData = handleResponse(response);
           }
 
           else if (operation === 'move') {
@@ -1309,13 +1324,14 @@ export class Groner implements INodeType {
             const statusId = this.getNodeParameter('statusId', i) as string;
             const validaStatusDisponivel = this.getNodeParameter('validaStatusDisponivel', i) as boolean;
 
-            responseData = await this.helpers.requestWithAuthentication.call(this, 'gronerApi', {
+            const response = await this.helpers.requestWithAuthentication.call(this, 'gronerApi', {
               method: 'POST',
               url: `${baseURL}/api/projeto/adicionarStatus/${dealId}?validaStatusDisponivel=${validaStatusDisponivel}`,
               body: {
                 statusId,
               },
             });
+            responseData = handleResponse(response);
           }
 
           else if (operation === 'search') {
@@ -1381,7 +1397,7 @@ export class Groner implements INodeType {
               }
             });
 
-            responseData = await this.helpers.requestWithAuthentication.call(this, 'gronerApi', {
+            const response = await this.helpers.requestWithAuthentication.call(this, 'gronerApi', {
               method: 'GET',
               url: `${baseURL}/api/projeto/cards`,
               headers: {
@@ -1390,6 +1406,7 @@ export class Groner implements INodeType {
               },
               qs,
             });
+            responseData = handleResponse(response);
           }
         }
 
@@ -1400,7 +1417,7 @@ export class Groner implements INodeType {
             const propriedade = this.getNodeParameter('propriedade', i) as string;
             const valor = this.getNodeParameter('valor', i) as string;
 
-            responseData = await this.helpers.requestWithAuthentication.call(this, 'gronerApi', {
+            const response = await this.helpers.requestWithAuthentication.call(this, 'gronerApi', {
               method: 'PUT',
               url: `${baseURL}/api/lead/${contactId}`,
               body: {
@@ -1408,6 +1425,7 @@ export class Groner implements INodeType {
                 valor,
               },
             });
+            responseData = handleResponse(response);
           }
         }
 
@@ -1423,7 +1441,7 @@ export class Groner implements INodeType {
             const dataInicial = this.getNodeParameter('dataInicial', i) as string;
             const dataEntrega = this.getNodeParameter('dataEntrega', i) as string;
 
-            responseData = await this.helpers.requestWithAuthentication.call(this, 'gronerApi', {
+            const response = await this.helpers.requestWithAuthentication.call(this, 'gronerApi', {
               method: 'POST',
               url: `${baseURL}/api/tarefa`,
               headers: {
@@ -1441,6 +1459,7 @@ export class Groner implements INodeType {
                 dataEntrega,
               },
             });
+            responseData = handleResponse(response);
           }
 
           else if (operation === 'search') {
@@ -1470,7 +1489,7 @@ export class Groner implements INodeType {
               }
             });
 
-            responseData = await this.helpers.requestWithAuthentication.call(this, 'gronerApi', {
+            const response = await this.helpers.requestWithAuthentication.call(this, 'gronerApi', {
               method: 'GET',
               url: `${baseURL}/api/tarefa`,
               headers: {
@@ -1479,6 +1498,7 @@ export class Groner implements INodeType {
               },
               qs,
             });
+            responseData = handleResponse(response);
           }
         }
 
@@ -1489,7 +1509,7 @@ export class Groner implements INodeType {
             const ocorrencia = this.getNodeParameter('ocorrencia', i) as string;
             const marcacoes = this.getNodeParameter('marcacoes', i) as string;
 
-            responseData = await this.helpers.requestWithAuthentication.call(this, 'gronerApi', {
+            const response = await this.helpers.requestWithAuthentication.call(this, 'gronerApi', {
               method: 'POST',
               url: `${baseURL}/api/projeto/adicionarocorrencia/${dealId}`,
               body: {
@@ -1497,6 +1517,7 @@ export class Groner implements INodeType {
                 marcacoes,
               },
             });
+            responseData = handleResponse(response);
           }
         }
 
@@ -1506,11 +1527,12 @@ export class Groner implements INodeType {
             const dealId = this.getNodeParameter('dealId', i) as number;
             const tagIds = this.getNodeParameter('tagIds', i) as string;
 
-            responseData = await this.helpers.requestWithAuthentication.call(this, 'gronerApi', {
+            const response = await this.helpers.requestWithAuthentication.call(this, 'gronerApi', {
               method: 'POST',
               url: `${baseURL}/api/projeto/AlterarEtiquetas/${dealId}`,
               body: tagIds,
             });
+            responseData = handleResponse(response);
           }
         }
 
@@ -1529,7 +1551,7 @@ export class Groner implements INodeType {
             const tecnico = this.getNodeParameter('tecnico', i) as boolean;
             const lead = this.getNodeParameter('lead', i) as boolean;
 
-            responseData = await this.helpers.requestWithAuthentication.call(this, 'gronerApi', {
+            const response = await this.helpers.requestWithAuthentication.call(this, 'gronerApi', {
               method: 'POST',
               url: `${baseURL}/api/WhatsApp/enviarMensagem`,
               body: {
@@ -1546,6 +1568,7 @@ export class Groner implements INodeType {
                 lead,
               },
             });
+            responseData = handleResponse(response);
           }
         }
 
