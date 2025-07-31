@@ -518,7 +518,6 @@ export class Groner implements INodeType {
             displayName: 'Note',
             name: 'nota',
             type: 'string',
-            typeOptions: { rows: 3 },
             default: '',
             placeholder: 'Additional notes about this lead...',
             description: 'Observation/note',
@@ -544,10 +543,10 @@ export class Groner implements INodeType {
             name: 'tipoPessoa',
             type: 'options',
             options: [
-              { name: 'Individual', value: 'F' },
-              { name: 'Company', value: 'J' },
+              { name: 'Pessoa Física', value: 'PF' },
+              { name: 'Pessoa Jurídica', value: 'PJ' },
             ],
-            default: 'F',
+            default: 'PF',
           },
           {
             displayName: 'Trade Name',
