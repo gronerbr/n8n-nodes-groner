@@ -1321,8 +1321,8 @@ export class Groner implements INodeType {
           else if (operation === 'search') {
             const pageSize = this.getNodeParameter('pageSize', i) as number;
             const query = this.getNodeParameter('query', i) as string;
-            const criterio = this.getNodeParameter('criterio', i) as string;
-            
+            const criterio = this.getNodeParameter('criteria', i) as string;
+
             // Get optional parameters with safe defaults
             const filters = this.getNodeParameter('filters', i, {}) as any;
             const location = this.getNodeParameter('location', i, {}) as any;
