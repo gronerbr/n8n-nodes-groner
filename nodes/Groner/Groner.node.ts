@@ -1322,54 +1322,56 @@ export class Groner implements INodeType {
             const pageSize = this.getNodeParameter('pageSize', i) as number;
             const query = this.getNodeParameter('query', i) as string;
             const criterio = this.getNodeParameter('criterio', i) as string;
-            const filters = this.getNodeParameter('filters', i) as any;
-            const location = this.getNodeParameter('location', i) as any;
-            const financial = this.getNodeParameter('financial', i) as any;
-            const dates = this.getNodeParameter('dates', i) as any;
-            const additionalFields = this.getNodeParameter('additionalFields', i) as any;
+            
+            // Get optional parameters with safe defaults
+            const filters = this.getNodeParameter('filters', i, {}) as any;
+            const location = this.getNodeParameter('location', i, {}) as any;
+            const financial = this.getNodeParameter('financial', i, {}) as any;
+            const dates = this.getNodeParameter('dates', i, {}) as any;
+            const additionalFields = this.getNodeParameter('additionalFields', i, {}) as any;
 
             const qs: any = {
               pageSize,
               query,
               criterio,
-              tipoProjetoId: filters.dealTypeId,
-              etapaId: filters.stageId,
-              statusId: filters.statusId,
-              vendedorResponsavelId: filters.responsibleSellerId,
-              tecnicoResponsavelId: filters.responsibleTechnicianId,
-              preVendedorId: filters.preSellerId,
-              leadId: additionalFields.leadId,
-              lojasIds: additionalFields.storesIds,
-              cidade: location.city,
-              uf: location.state,
-              potenciaInicial: financial.initialPower,
-              potenciaFinal: financial.finalPower,
-              valorInicial: financial.initialValue,
-              valorFinal: financial.finalValue,
-              consumoInicial: financial.initialConsumption,
-              consumoFinal: financial.finalConsumption,
-              etiquetasIds: additionalFields.tagsIds,
-              origensIds: additionalFields.originsIds,
-              statusHistoricoIds: additionalFields.statusHistoryIds,
-              nStatusHistoricoIds: additionalFields.nStatusHistoryIds,
-              dataInicial: dates.startDate,
-              dataFinal: dates.endDate,
-              dataPrevisaoFechamentoInicial: dates.initialClosingForecastDate,
-              dataPrevisaoFechamentoFinal: dates.finalClosingForecastDate,
-              dataPropostaAceitaInicial: dates.initialProposalDate,
-              dataPropostaAceitaFinal: dates.finalProposalDate,
-              dataVendaInicial: dates.initialSaleDate,
-              dataVendaFinal: dates.finalSaleDate,
-              dataPerdaInicial: dates.initialLossDate,
-              dataPerdaFinal: dates.finalLossDate,
-              ordenarPor: additionalFields.orderBy,
-              qualificacaoInicial: additionalFields.initialQualification,
-              qualificacaoFinal: additionalFields.finalQualification,
-              indicador: additionalFields.indicator,
-              donoContatoId: additionalFields.contactOwnerId,
-              campanha: additionalFields.campaign,
-              anuncio: additionalFields.advertisement,
-              conjuntoAnuncios: additionalFields.adSet,
+              tipoProjetoId: filters?.dealTypeId,
+              etapaId: filters?.stageId,
+              statusId: filters?.statusId,
+              vendedorResponsavelId: filters?.responsibleSellerId,
+              tecnicoResponsavelId: filters?.responsibleTechnicianId,
+              preVendedorId: filters?.preSellerId,
+              leadId: additionalFields?.leadId,
+              lojasIds: additionalFields?.storesIds,
+              cidade: location?.city,
+              uf: location?.state,
+              potenciaInicial: financial?.initialPower,
+              potenciaFinal: financial?.finalPower,
+              valorInicial: financial?.initialValue,
+              valorFinal: financial?.finalValue,
+              consumoInicial: financial?.initialConsumption,
+              consumoFinal: financial?.finalConsumption,
+              etiquetasIds: additionalFields?.tagsIds,
+              origensIds: additionalFields?.originsIds,
+              statusHistoricoIds: additionalFields?.statusHistoryIds,
+              nStatusHistoricoIds: additionalFields?.nStatusHistoryIds,
+              dataInicial: dates?.startDate,
+              dataFinal: dates?.endDate,
+              dataPrevisaoFechamentoInicial: dates?.initialClosingForecastDate,
+              dataPrevisaoFechamentoFinal: dates?.finalClosingForecastDate,
+              dataPropostaAceitaInicial: dates?.initialProposalDate,
+              dataPropostaAceitaFinal: dates?.finalProposalDate,
+              dataVendaInicial: dates?.initialSaleDate,
+              dataVendaFinal: dates?.finalSaleDate,
+              dataPerdaInicial: dates?.initialLossDate,
+              dataPerdaFinal: dates?.finalLossDate,
+              ordenarPor: additionalFields?.orderBy,
+              qualificacaoInicial: additionalFields?.initialQualification,
+              qualificacaoFinal: additionalFields?.finalQualification,
+              indicador: additionalFields?.indicator,
+              donoContatoId: additionalFields?.contactOwnerId,
+              campanha: additionalFields?.campaign,
+              anuncio: additionalFields?.advertisement,
+              conjuntoAnuncios: additionalFields?.adSet,
             };
 
             // Remove undefined values
@@ -1444,21 +1446,21 @@ export class Groner implements INodeType {
           else if (operation === 'search') {
             const pageSize = this.getNodeParameter('pageSize', i) as number;
             const query = this.getNodeParameter('query', i) as string;
-            const additionalFields = this.getNodeParameter('additionalFields', i) as any;
+            const additionalFields = this.getNodeParameter('additionalFields', i, {}) as any;
 
             const qs: any = {
-              leadId: additionalFields.leadId,
-              projetoId: additionalFields.projetoId,
-              tipoId: additionalFields.tipoId,
-              pageNumber: additionalFields.pageNumber,
+              leadId: additionalFields?.leadId,
+              projetoId: additionalFields?.projetoId,
+              tipoId: additionalFields?.tipoId,
+              pageNumber: additionalFields?.pageNumber,
               pageSize,
               query,
-              usuarioId: additionalFields.usuarioId,
-              lojasIds: additionalFields.lojasIds,
-              statusId: additionalFields.statusId,
-              ordenarPor: additionalFields.ordenarPor,
-              dataInicial: additionalFields.dataInicial,
-              dataFinal: additionalFields.dataFinal,
+              usuarioId: additionalFields?.usuarioId,
+              lojasIds: additionalFields?.lojasIds,
+              statusId: additionalFields?.statusId,
+              ordenarPor: additionalFields?.ordenarPor,
+              dataInicial: additionalFields?.dataInicial,
+              dataFinal: additionalFields?.dataFinal,
             };
 
             // Remove undefined values
