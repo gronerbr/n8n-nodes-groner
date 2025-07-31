@@ -1249,11 +1249,9 @@ export class Groner implements INodeType {
     // Helper function to handle search deals response with returnOnlyList option
     const handleSearchDealsResponse = (response: any, returnOnlyList: boolean) => {
       const rawResponse = handleResponse(response);
-      
-      if (returnOnlyList && rawResponse && Array.isArray(rawResponse) && rawResponse.length > 0) {
-        const firstResponse = rawResponse[0];
-        if (firstResponse.Content && firstResponse.Content.list) {
-          return firstResponse.Content.list;
+      if (returnOnlyList && rawResponse) {
+        if (rawResponse.Content && rawResponse.Content.list) {
+          return rawResponse.Content.list;
         }
       }
       return rawResponse;
