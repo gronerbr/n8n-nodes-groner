@@ -1,5 +1,5 @@
 /* eslint-disable n8n-nodes-base/node-filename-against-convention */
-import { INodeType, INodeTypeDescription, NodeConnectionType  } from 'n8n-workflow';
+import { INodeType, INodeTypeDescription, NodeConnectionType, IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
 import { getStatuses } from './loadOptions/getStatuses.js';
 import { getOrigins } from './loadOptions/getOrigins.js';
 import { getResponsibles } from './loadOptions/getResponsibles.js';
@@ -61,143 +61,30 @@ export class Groner implements INodeType {
             value: 'create',
             action: 'Create a new deal',
             description: 'Create a new deal in Groner',
-            routing: {
-              request: {
-                method: 'POST',
-                url: '=/api/lead/FluentForm/{{$parameter["codOrigem"]}}',
-                headers: {
-                  'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: {
-                  nome: '={{$parameter["nome"]}}',
-                  email: '={{$parameter["email"]}}',
-                  telefone: '={{$parameter["telefone"]}}',
-                  cidade: '={{$parameter["additionalFields"]["cidade"]}}',
-                  documento: '={{$parameter["additionalFields"]["documento"]}}',
-                  tipoPessoa: '={{$parameter["additionalFields"]["tipoPessoa"]}}',
-                  uf: '={{$parameter["additionalFields"]["uf"]}}',
-                  valorConta: '={{$parameter["additionalFields"]["valorConta"]}}',
-                  responsavelId: '={{$parameter["additionalFields"]["responsavelId"]}}',
-                  emailResponsavel: '={{$parameter["additionalFields"]["emailResponsavel"]}}',
-                  nota: '={{$parameter["additionalFields"]["nota"]}}',
-                  url: '={{$parameter["additionalFields"]["url"]}}',
-                  campanha: '={{$parameter["additionalFields"]["campanha"]}}',
-                  anuncio: '={{$parameter["additionalFields"]["anuncio"]}}',
-                  conjuntoAnuncios: '={{$parameter["additionalFields"]["conjuntoAnuncios"]}}',
-                  codigoLeadTracking: '={{$parameter["additionalFields"]["codigoLeadTracking"]}}',
-                  nomeFantasia: '={{$parameter["additionalFields"]["nomeFantasia"]}}',
-                  segmento: '={{$parameter["additionalFields"]["segmento"]}}',
-                  tipoProjetoId: '={{$parameter["additionalFields"]["tipoProjetoId"]}}',
-                },
-              },
-            },
           },
-
           {
             name: 'Edit by Property',
             value: 'editByProperty',
             action: 'Edit deal by property',
             description: 'Edit deal by specific property',
-            routing: {
-              request: {
-                method: 'PUT',
-                url: '=/api/projeto/{{$parameter["dealId"]}}',
-                body: {
-                  propriedade: '={{$parameter["propriedade"]}}',
-                  valor: '={{$parameter["valor"]}}',
-                },
-              },
-            },
           },
           {
             name: 'Get Quote',
             value: 'getQuote',
             action: 'Get deal quote',
             description: 'Get quote information for a deal',
-            routing: {
-              request: {
-                method: 'GET',
-                url: '=/api/orcamento/unico/{{$parameter["dealId"]}}?pageSize=5&pageNumber=1',
-                headers: {
-                  'Content-Type': 'application/json',
-                  'Accept': 'application/json',
-                },
-              },
-            },
           },
           {
             name: 'Move',
             value: 'move',
             action: 'Move a deal',
             description: 'Move a deal to a different stage',
-            routing: {
-              request: {
-                method: 'POST',
-                url: '=/api/projeto/adicionarStatus/{{$parameter["dealId"]}}?validaStatusDisponivel={{$parameter["validaStatusDisponivel"]}}',
-                body: {
-                  statusId: '={{$parameter["statusId"]}}',
-                },
-              },
-            },
           },
           {
             name: 'Search',
             value: 'search',
             action: 'Search for deals',
             description: 'Search deals with filters',
-            routing: {
-              request: {
-                method: 'GET',
-                url: '=/api/projeto/cards',
-                headers: {
-                  'Content-Type': 'application/json',
-                  'Accept': 'application/json, text/plain, */*',
-                },
-                qs: {
-                  pageSize: '={{$parameter["pageSize"]}}',
-                  query: '={{$parameter["query"]}}',
-                  criterio: '={{$parameter["criterio"]}}',
-                  tipoProjetoId: '={{$parameter["filters"]["dealTypeId"]}}',
-                  etapaId: '={{$parameter["filters"]["stageId"]}}',
-                  statusId: '={{$parameter["filters"]["statusId"]}}',
-                  vendedorResponsavelId: '={{$parameter["filters"]["responsibleSellerId"]}}',
-                  tecnicoResponsavelId: '={{$parameter["filters"]["responsibleTechnicianId"]}}',
-                  preVendedorId: '={{$parameter["filters"]["preSellerId"]}}',
-                  leadId: '={{$parameter["additionalFields"]["leadId"]}}',
-                  lojasIds: '={{$parameter["additionalFields"]["storesIds"]}}',
-                  cidade: '={{$parameter["location"]["city"]}}',
-                  uf: '={{$parameter["location"]["state"]}}',
-                  potenciaInicial: '={{$parameter["financial"]["initialPower"]}}',
-                  potenciaFinal: '={{$parameter["financial"]["finalPower"]}}',
-                  valorInicial: '={{$parameter["financial"]["initialValue"]}}',
-                  valorFinal: '={{$parameter["financial"]["finalValue"]}}',
-                  consumoInicial: '={{$parameter["financial"]["initialConsumption"]}}',
-                  consumoFinal: '={{$parameter["financial"]["finalConsumption"]}}',
-                  etiquetasIds: '={{$parameter["additionalFields"]["tagsIds"]}}',
-                  origensIds: '={{$parameter["additionalFields"]["originsIds"]}}',
-                  statusHistoricoIds: '={{$parameter["additionalFields"]["statusHistoryIds"]}}',
-                  nStatusHistoricoIds: '={{$parameter["additionalFields"]["nStatusHistoryIds"]}}',
-                  dataInicial: '={{$parameter["dates"]["startDate"]}}',
-                  dataFinal: '={{$parameter["dates"]["endDate"]}}',
-                  dataPrevisaoFechamentoInicial: '={{$parameter["dates"]["initialClosingForecastDate"]}}',
-                  dataPrevisaoFechamentoFinal: '={{$parameter["dates"]["finalClosingForecastDate"]}}',
-                  dataPropostaAceitaInicial: '={{$parameter["dates"]["initialProposalDate"]}}',
-                  dataPropostaAceitaFinal: '={{$parameter["dates"]["finalProposalDate"]}}',
-                  dataVendaInicial: '={{$parameter["dates"]["initialSaleDate"]}}',
-                  dataVendaFinal: '={{$parameter["dates"]["finalSaleDate"]}}',
-                  dataPerdaInicial: '={{$parameter["dates"]["initialLossDate"]}}',
-                  dataPerdaFinal: '={{$parameter["dates"]["finalLossDate"]}}',
-                  ordenarPor: '={{$parameter["additionalFields"]["orderBy"]}}',
-                  qualificacaoInicial: '={{$parameter["additionalFields"]["initialQualification"]}}',
-                  qualificacaoFinal: '={{$parameter["additionalFields"]["finalQualification"]}}',
-                  indicador: '={{$parameter["additionalFields"]["indicator"]}}',
-                  donoContatoId: '={{$parameter["additionalFields"]["contactOwnerId"]}}',
-                  campanha: '={{$parameter["additionalFields"]["campaign"]}}',
-                  anuncio: '={{$parameter["additionalFields"]["advertisement"]}}',
-                  conjuntoAnuncios: '={{$parameter["additionalFields"]["adSet"]}}',
-                },
-              },
-            },
           },
         ],
         default: 'create',
@@ -216,16 +103,6 @@ export class Groner implements INodeType {
             value: 'editByProperty',
             action: 'Edit contact by property',
             description: 'Edit contact by specific property',
-            routing: {
-              request: {
-                method: 'PUT',
-                url: '=/api/lead/{{$parameter["contactId"]}}',
-                body: {
-                  propriedade: '={{$parameter["propriedade"]}}',
-                  valor: '={{$parameter["valor"]}}',
-                },
-              },
-            },
           },
         ],
         default: 'editByProperty',
@@ -244,56 +121,12 @@ export class Groner implements INodeType {
             value: 'create',
             action: 'Create a task',
             description: 'Create a new task',
-            routing: {
-              request: {
-                method: 'POST',
-                url: '=/api/tarefa',
-                headers: {
-                  'Content-Type': 'application/json',
-                  'Accept': 'application/json',
-                },
-                body: {
-                  titulo: '={{$parameter["titulo"]}}',
-                  descricao: '={{$parameter["descricao"]}}',
-                  tipoId: '={{$parameter["tipoId"]}}',
-                  statusId: '={{$parameter["statusId"]}}',
-                  projetoId: '={{$parameter["projetoId"]}}',
-                  usuariosIds: '={{$parameter["usuariosIds"]}}',
-                  dataInicial: '={{$parameter["dataInicial"]}}',
-                  dataEntrega: '={{$parameter["dataEntrega"]}}',
-                },
-              },
-            },
           },
           {
             name: 'Search',
             value: 'search',
             action: 'Search tasks',
             description: 'Search for tasks',
-            routing: {
-              request: {
-                method: 'GET',
-                url: '=/api/tarefa',
-                headers: {
-                  'Content-Type': 'application/json',
-                  'Accept': 'application/json, text/plain, */*',
-                },
-                qs: {
-                  leadId: '={{$parameter["additionalFields"]["leadId"]}}',
-                  projetoId: '={{$parameter["additionalFields"]["projetoId"]}}',
-                  tipoId: '={{$parameter["additionalFields"]["tipoId"]}}',
-                  pageNumber: '={{$parameter["additionalFields"]["pageNumber"]}}',
-                  pageSize: '={{$parameter["pageSize"]}}',
-                  query: '={{$parameter["query"]}}',
-                  usuarioId: '={{$parameter["additionalFields"]["usuarioId"]}}',
-                  lojasIds: '={{$parameter["additionalFields"]["lojasIds"]}}',
-                  statusId: '={{$parameter["additionalFields"]["statusId"]}}',
-                  ordenarPor: '={{$parameter["additionalFields"]["ordenarPor"]}}',
-                  dataInicial: '={{$parameter["additionalFields"]["dataInicial"]}}',
-                  dataFinal: '={{$parameter["additionalFields"]["dataFinal"]}}',
-                },
-              },
-            },
           },
         ],
         default: 'create',
@@ -312,16 +145,6 @@ export class Groner implements INodeType {
             value: 'add',
             action: 'Add a note',
             description: 'Add a note to a deal',
-            routing: {
-              request: {
-                method: 'POST',
-                url: '=/api/projeto/adicionarocorrencia/{{$parameter["dealId"]}}',
-                body: {
-                  ocorrencia: '={{$parameter["ocorrencia"]}}',
-                  marcacoes: '={{$parameter["marcacoes"]}}',
-                },
-              },
-            },
           },
         ],
         default: 'add',
@@ -340,13 +163,6 @@ export class Groner implements INodeType {
             value: 'add',
             action: 'Add tags',
             description: 'Add tags to a deal',
-            routing: {
-              request: {
-                method: 'POST',
-                url: '=/api/projeto/AlterarEtiquetas/{{$parameter["dealId"]}}',
-                body: '={{$parameter["tagIds"]}}',
-              },
-            },
           },
         ],
         default: 'add',
@@ -365,25 +181,6 @@ export class Groner implements INodeType {
             value: 'send',
             action: 'Send whats app message',
             description: 'Send a WhatsApp message',
-            routing: {
-              request: {
-                method: 'POST',
-                url: '=/api/WhatsApp/enviarMensagem',
-                body: {
-                  leadId: '={{$parameter["leadId"]}}',
-                  mensagem: '={{$parameter["mensagem"]}}',
-                  celular: '={{$parameter["celular"]}}',
-                  urlImagem: '={{$parameter["urlImagem"]}}',
-                  urlAudio: '={{$parameter["urlAudio"]}}',
-                  urlVideo: '={{$parameter["urlVideo"]}}',
-                  urlDocumento: '={{$parameter["urlDocumento"]}}',
-                  preVendedor: '={{$parameter["preVendedor"]}}',
-                  vendedor: '={{$parameter["vendedor"]}}',
-                  tecnico: '={{$parameter["tecnico"]}}',
-                  lead: '={{$parameter["lead"]}}',
-                },
-              },
-            },
           },
         ],
         default: 'send',
@@ -1420,4 +1217,350 @@ export class Groner implements INodeType {
       getContactProperties,
     },
   };
+
+  async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
+    const items = this.getInputData();
+    const returnData: INodeExecutionData[] = [];
+
+    for (let i = 0; i < items.length; i++) {
+      try {
+        const resource = this.getNodeParameter('resource', i) as string;
+        const operation = this.getNodeParameter('operation', i) as string;
+
+        let responseData: any;
+
+        // Deal operations
+        if (resource === 'deal') {
+          if (operation === 'create') {
+            const codOrigem = this.getNodeParameter('codOrigem', i) as string;
+            const nome = this.getNodeParameter('nome', i) as string;
+            const email = this.getNodeParameter('email', i) as string;
+            const telefone = this.getNodeParameter('telefone', i) as string;
+            const additionalFields = this.getNodeParameter('additionalFields', i) as any;
+
+            const body = {
+              nome,
+              email,
+              telefone,
+              cidade: additionalFields.cidade || '',
+              documento: additionalFields.documento || '',
+              tipoPessoa: additionalFields.tipoPessoa || 'PF',
+              uf: additionalFields.uf || '',
+              valorConta: additionalFields.valorConta || 0,
+              responsavelId: additionalFields.responsavelId || '',
+              emailResponsavel: additionalFields.emailResponsavel || '',
+              nota: additionalFields.nota || '',
+              url: additionalFields.url || '',
+              campanha: additionalFields.campanha || '',
+              anuncio: additionalFields.anuncio || '',
+              conjuntoAnuncios: additionalFields.conjuntoAnuncios || '',
+              codigoLeadTracking: additionalFields.codigoLeadTracking || '',
+              nomeFantasia: additionalFields.nomeFantasia || '',
+              segmento: additionalFields.segmento || '',
+              tipoProjetoId: additionalFields.tipoProjetoId || '',
+            };
+
+            responseData = await this.helpers.requestWithAuthentication.call(this, 'gronerApi', {
+              method: 'POST',
+              url: `/api/lead/FluentForm/${codOrigem}`,
+              headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+              },
+              body,
+            });
+          }
+
+          else if (operation === 'editByProperty') {
+            const dealId = this.getNodeParameter('dealId', i) as number;
+            const propriedade = this.getNodeParameter('propriedade', i) as string;
+            const valor = this.getNodeParameter('valor', i) as string;
+
+            responseData = await this.helpers.requestWithAuthentication.call(this, 'gronerApi', {
+              method: 'PUT',
+              url: `/api/projeto/${dealId}`,
+              body: {
+                propriedade,
+                valor,
+              },
+            });
+          }
+
+          else if (operation === 'getQuote') {
+            const dealId = this.getNodeParameter('dealId', i) as string;
+
+            responseData = await this.helpers.requestWithAuthentication.call(this, 'gronerApi', {
+              method: 'GET',
+              url: `/api/orcamento/unico/${dealId}?pageSize=5&pageNumber=1`,
+              headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+              },
+            });
+          }
+
+          else if (operation === 'move') {
+            const dealId = this.getNodeParameter('dealId', i) as string;
+            const statusId = this.getNodeParameter('statusId', i) as string;
+            const validaStatusDisponivel = this.getNodeParameter('validaStatusDisponivel', i) as boolean;
+
+            responseData = await this.helpers.requestWithAuthentication.call(this, 'gronerApi', {
+              method: 'POST',
+              url: `/api/projeto/adicionarStatus/${dealId}?validaStatusDisponivel=${validaStatusDisponivel}`,
+              body: {
+                statusId,
+              },
+            });
+          }
+
+          else if (operation === 'search') {
+            const pageSize = this.getNodeParameter('pageSize', i) as number;
+            const query = this.getNodeParameter('query', i) as string;
+            const criterio = this.getNodeParameter('criterio', i) as string;
+            const filters = this.getNodeParameter('filters', i) as any;
+            const location = this.getNodeParameter('location', i) as any;
+            const financial = this.getNodeParameter('financial', i) as any;
+            const dates = this.getNodeParameter('dates', i) as any;
+            const additionalFields = this.getNodeParameter('additionalFields', i) as any;
+
+            const qs: any = {
+              pageSize,
+              query,
+              criterio,
+              tipoProjetoId: filters.dealTypeId,
+              etapaId: filters.stageId,
+              statusId: filters.statusId,
+              vendedorResponsavelId: filters.responsibleSellerId,
+              tecnicoResponsavelId: filters.responsibleTechnicianId,
+              preVendedorId: filters.preSellerId,
+              leadId: additionalFields.leadId,
+              lojasIds: additionalFields.storesIds,
+              cidade: location.city,
+              uf: location.state,
+              potenciaInicial: financial.initialPower,
+              potenciaFinal: financial.finalPower,
+              valorInicial: financial.initialValue,
+              valorFinal: financial.finalValue,
+              consumoInicial: financial.initialConsumption,
+              consumoFinal: financial.finalConsumption,
+              etiquetasIds: additionalFields.tagsIds,
+              origensIds: additionalFields.originsIds,
+              statusHistoricoIds: additionalFields.statusHistoryIds,
+              nStatusHistoricoIds: additionalFields.nStatusHistoryIds,
+              dataInicial: dates.startDate,
+              dataFinal: dates.endDate,
+              dataPrevisaoFechamentoInicial: dates.initialClosingForecastDate,
+              dataPrevisaoFechamentoFinal: dates.finalClosingForecastDate,
+              dataPropostaAceitaInicial: dates.initialProposalDate,
+              dataPropostaAceitaFinal: dates.finalProposalDate,
+              dataVendaInicial: dates.initialSaleDate,
+              dataVendaFinal: dates.finalSaleDate,
+              dataPerdaInicial: dates.initialLossDate,
+              dataPerdaFinal: dates.finalLossDate,
+              ordenarPor: additionalFields.orderBy,
+              qualificacaoInicial: additionalFields.initialQualification,
+              qualificacaoFinal: additionalFields.finalQualification,
+              indicador: additionalFields.indicator,
+              donoContatoId: additionalFields.contactOwnerId,
+              campanha: additionalFields.campaign,
+              anuncio: additionalFields.advertisement,
+              conjuntoAnuncios: additionalFields.adSet,
+            };
+
+            // Remove undefined values
+            Object.keys(qs).forEach(key => {
+              if (qs[key] === undefined || qs[key] === '') {
+                delete qs[key];
+              }
+            });
+
+            responseData = await this.helpers.requestWithAuthentication.call(this, 'gronerApi', {
+              method: 'GET',
+              url: '/api/projeto/cards',
+              headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json, text/plain, */*',
+              },
+              qs,
+            });
+          }
+        }
+
+        // Contact operations
+        else if (resource === 'contact') {
+          if (operation === 'editByProperty') {
+            const contactId = this.getNodeParameter('contactId', i) as number;
+            const propriedade = this.getNodeParameter('propriedade', i) as string;
+            const valor = this.getNodeParameter('valor', i) as string;
+
+            responseData = await this.helpers.requestWithAuthentication.call(this, 'gronerApi', {
+              method: 'PUT',
+              url: `/api/lead/${contactId}`,
+              body: {
+                propriedade,
+                valor,
+              },
+            });
+          }
+        }
+
+        // Task operations
+        else if (resource === 'task') {
+          if (operation === 'create') {
+            const titulo = this.getNodeParameter('titulo', i) as string;
+            const descricao = this.getNodeParameter('descricao', i) as string;
+            const tipoId = this.getNodeParameter('tipoId', i) as string;
+            const statusId = this.getNodeParameter('statusId', i) as string;
+            const projetoId = this.getNodeParameter('projetoId', i) as number;
+            const usuariosIds = this.getNodeParameter('usuariosIds', i) as string[];
+            const dataInicial = this.getNodeParameter('dataInicial', i) as string;
+            const dataEntrega = this.getNodeParameter('dataEntrega', i) as string;
+
+            responseData = await this.helpers.requestWithAuthentication.call(this, 'gronerApi', {
+              method: 'POST',
+              url: '/api/tarefa',
+              headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+              },
+              body: {
+                titulo,
+                descricao,
+                tipoId,
+                statusId,
+                projetoId,
+                usuariosIds,
+                dataInicial,
+                dataEntrega,
+              },
+            });
+          }
+
+          else if (operation === 'search') {
+            const pageSize = this.getNodeParameter('pageSize', i) as number;
+            const query = this.getNodeParameter('query', i) as string;
+            const additionalFields = this.getNodeParameter('additionalFields', i) as any;
+
+            const qs: any = {
+              leadId: additionalFields.leadId,
+              projetoId: additionalFields.projetoId,
+              tipoId: additionalFields.tipoId,
+              pageNumber: additionalFields.pageNumber,
+              pageSize,
+              query,
+              usuarioId: additionalFields.usuarioId,
+              lojasIds: additionalFields.lojasIds,
+              statusId: additionalFields.statusId,
+              ordenarPor: additionalFields.ordenarPor,
+              dataInicial: additionalFields.dataInicial,
+              dataFinal: additionalFields.dataFinal,
+            };
+
+            // Remove undefined values
+            Object.keys(qs).forEach(key => {
+              if (qs[key] === undefined || qs[key] === '') {
+                delete qs[key];
+              }
+            });
+
+            responseData = await this.helpers.requestWithAuthentication.call(this, 'gronerApi', {
+              method: 'GET',
+              url: '/api/tarefa',
+              headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json, text/plain, */*',
+              },
+              qs,
+            });
+          }
+        }
+
+        // Note operations
+        else if (resource === 'note') {
+          if (operation === 'add') {
+            const dealId = this.getNodeParameter('dealId', i) as number;
+            const ocorrencia = this.getNodeParameter('ocorrencia', i) as string;
+            const marcacoes = this.getNodeParameter('marcacoes', i) as string;
+
+            responseData = await this.helpers.requestWithAuthentication.call(this, 'gronerApi', {
+              method: 'POST',
+              url: `/api/projeto/adicionarocorrencia/${dealId}`,
+              body: {
+                ocorrencia,
+                marcacoes,
+              },
+            });
+          }
+        }
+
+        // Tag operations
+        else if (resource === 'tag') {
+          if (operation === 'add') {
+            const dealId = this.getNodeParameter('dealId', i) as number;
+            const tagIds = this.getNodeParameter('tagIds', i) as string;
+
+            responseData = await this.helpers.requestWithAuthentication.call(this, 'gronerApi', {
+              method: 'POST',
+              url: `/api/projeto/AlterarEtiquetas/${dealId}`,
+              body: tagIds,
+            });
+          }
+        }
+
+        // WhatsApp operations
+        else if (resource === 'whatsapp') {
+          if (operation === 'send') {
+            const leadId = this.getNodeParameter('leadId', i) as number;
+            const mensagem = this.getNodeParameter('mensagem', i) as string;
+            const celular = this.getNodeParameter('celular', i) as string;
+            const urlImagem = this.getNodeParameter('urlImagem', i) as string;
+            const urlAudio = this.getNodeParameter('urlAudio', i) as string;
+            const urlVideo = this.getNodeParameter('urlVideo', i) as string;
+            const urlDocumento = this.getNodeParameter('urlDocumento', i) as string;
+            const preVendedor = this.getNodeParameter('preVendedor', i) as boolean;
+            const vendedor = this.getNodeParameter('vendedor', i) as boolean;
+            const tecnico = this.getNodeParameter('tecnico', i) as boolean;
+            const lead = this.getNodeParameter('lead', i) as boolean;
+
+            responseData = await this.helpers.requestWithAuthentication.call(this, 'gronerApi', {
+              method: 'POST',
+              url: '/api/WhatsApp/enviarMensagem',
+              body: {
+                leadId,
+                mensagem,
+                celular,
+                urlImagem,
+                urlAudio,
+                urlVideo,
+                urlDocumento,
+                preVendedor,
+                vendedor,
+                tecnico,
+                lead,
+              },
+            });
+          }
+        }
+
+        const executionData = this.helpers.constructExecutionMetaData(
+          this.helpers.returnJsonArray(responseData),
+          { itemData: { item: i } },
+        );
+
+        returnData.push(...executionData);
+
+      } catch (error) {
+        if (this.continueOnFail()) {
+          const executionErrorData = this.helpers.constructExecutionMetaData(
+            this.helpers.returnJsonArray({ error: error.message }),
+            { itemData: { item: i } },
+          );
+          returnData.push(...executionErrorData);
+          continue;
+        }
+        throw error;
+      }
+    }
+
+    return [returnData];
+  }
 }
