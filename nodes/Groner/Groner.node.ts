@@ -1246,6 +1246,19 @@ export class Groner implements INodeType {
       return response;
     };
 
+    // Helper function to handle search deals response with returnOnlyList option
+    const handleSearchDealsResponse = (response: any, returnOnlyList: boolean) => {
+      const rawResponse = handleResponse(response);
+      
+      if (returnOnlyList && rawResponse && Array.isArray(rawResponse) && rawResponse.length > 0) {
+        const firstResponse = rawResponse[0];
+        if (firstResponse.Content && firstResponse.Content.list) {
+          return firstResponse.Content.list;
+        }
+      }
+      return rawResponse;
+    };
+
     for (let i = 0; i < items.length; i++) {
       try {
         const resource = this.getNodeParameter('resource', i) as string;
@@ -1406,7 +1419,7 @@ export class Groner implements INodeType {
               }
             });
 
-            const response = await this.helpers.requestWithAuthentication.call(this, 'gronerApi', {
+                        const response = await this.helpers.requestWithAuthentication.call(this, 'gronerApi', {
               method: 'GET',
               url: `${baseURL}/api/projeto/cards`,
               headers: {
@@ -1415,19 +1428,7 @@ export class Groner implements INodeType {
               },
               qs,
             });
-            const rawResponse = handleResponse(response);
-
-            // Process response based on returnOnlyList parameter
-            if (returnOnlyList && rawResponse && Array.isArray(rawResponse) && rawResponse.length > 0) {
-              const firstResponse = rawResponse[0];
-              if (firstResponse.Content && firstResponse.Content.list) {
-                responseData = firstResponse.Content.list;
-              } else {
-                responseData = rawResponse;
-              }
-            } else {
-              responseData = rawResponse;
-            }
+            responseData = handleSearchDealsResponse(response, returnOnlyList);
           }
         }
 
