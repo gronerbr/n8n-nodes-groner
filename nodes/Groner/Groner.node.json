@@ -5,6 +5,7 @@
   "categories": [
     "CRM"
   ],
+  "usableAsTool": true,
   "resources": {
     "credentialDocumentation": [
       {

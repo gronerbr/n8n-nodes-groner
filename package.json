@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-groner",
-  "version": "0.1.31",
+  "version": "0.1.32",
   "description": "Custom nodes for Groner CRM (Solar CRM) integration with n8n",
   "keywords": [
     "n8n-community-node-package"
@@ -52,8 +52,5 @@
   "peerDependencies": {
     "n8n-workflow": "*"
   },
-  "dependencies": {
-    "axios": "^1.10.0",
-    "jsonwebtoken": "^9.0.2"
-  }
+  "dependencies": {}
 }
