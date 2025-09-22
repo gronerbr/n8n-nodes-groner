@@ -1175,6 +1175,17 @@ export class Groner implements INodeType {
         placeholder: 'https://example.com/document.pdf',
         description: 'Document attachment URL',
       },
+			{
+        displayName: 'Loja Id',
+        name: 'lojaId',
+        type: 'number',
+        typeOptions: { minValue: 1 },
+        required: false,
+        default: '',
+        displayOptions: { show: { resource: ['whatsapp'], operation: ['send'] } },
+        placeholder: '12345',
+        description: 'The lead ID to send message to',
+      },
       {
         displayName: 'Enviar para Pré Vendedor',
         name: 'preVendedor',
@@ -1400,7 +1411,7 @@ export class Groner implements INodeType {
               dataVendaFinal: dates?.finalSaleDate,
               dataPerdaInicial: dates?.initialLossDate,
               dataPerdaFinal: dates?.finalLossDate,
-              ordenarPor: additionalFields?.orderBy,
+              ordenarPor: additionalFields?.sortBy,
               qualificacaoInicial: additionalFields?.initialQualification,
               qualificacaoFinal: additionalFields?.finalQualification,
               indicador: additionalFields?.indicator,
@@ -1417,7 +1428,7 @@ export class Groner implements INodeType {
               }
             });
 
-                        const response = await this.helpers.requestWithAuthentication.call(this, 'gronerApi', {
+              const response = await this.helpers.requestWithAuthentication.call(this, 'gronerApi', {
               method: 'GET',
               url: `${baseURL}/api/projeto/cards`,
               headers: {
@@ -1566,6 +1577,7 @@ export class Groner implements INodeType {
             const urlAudio = this.getNodeParameter('urlAudio', i) as string;
             const urlVideo = this.getNodeParameter('urlVideo', i) as string;
             const urlDocumento = this.getNodeParameter('urlDocumento', i) as string;
+            const lojaId = this.getNodeParameter('lojaId', i) as number;
             const preVendedor = this.getNodeParameter('preVendedor', i) as boolean;
             const vendedor = this.getNodeParameter('vendedor', i) as boolean;
             const tecnico = this.getNodeParameter('tecnico', i) as boolean;
@@ -1582,6 +1594,7 @@ export class Groner implements INodeType {
                 urlAudio,
                 urlVideo,
                 urlDocumento,
+								lojaId,
                 preVendedor,
                 vendedor,
                 tecnico,
