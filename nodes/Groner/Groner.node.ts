@@ -1176,11 +1176,10 @@ export class Groner implements INodeType {
         description: 'Document attachment URL',
       },
 			{
-        displayName: 'Loja Id',
+        displayName: 'Loja ID',
         name: 'lojaId',
         type: 'number',
         typeOptions: { minValue: 1 },
-        required: false,
         default: '',
         displayOptions: { show: { resource: ['whatsapp'], operation: ['send'] } },
         placeholder: '12345',
