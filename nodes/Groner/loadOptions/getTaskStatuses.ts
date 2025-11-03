@@ -19,7 +19,7 @@ export async function getTaskStatuses(this: ILoadOptionsFunctions): Promise<Arra
 		json: true,
 	};
 
-	const response = await this.helpers.requestWithAuthentication.call(this, 'gronerApi', options);
+    const response = await this.helpers.httpRequestWithAuthentication.call(this, 'gronerApi', options);
 
 	const statuses = response?.Content?.list || [];
 

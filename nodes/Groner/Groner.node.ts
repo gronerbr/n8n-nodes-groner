@@ -27,9 +27,6 @@ export class Groner implements INodeType {
     inputs: [NodeConnectionType.Main],
 		outputs: [NodeConnectionType.Main],
     credentials: [{ name: 'gronerApi', required: true }],
-    requestDefaults: {
-      baseURL: '={{ "https://" + $credentials.tenant + ".api.groner.app" }}',
-    },
     properties: [
       // Resource selector
       {
@@ -371,41 +368,7 @@ export class Groner implements INodeType {
         },
 
       // ===== CAMPOS PARA SEARCH DEALS =====
-      {
-        displayName: 'Page Size',
-        name: 'pageSize',
-        type: 'number',
-        typeOptions: { minValue: 1, maxValue: 100 },
-        default: 20,
-        displayOptions: { show: { resource: ['deal'], operation: ['search'] } },
-        description: 'Number of deals to return per page',
-      },
-      {
-        displayName: 'Search Query',
-        name: 'query',
-        type: 'string',
-        default: '',
-        displayOptions: { show: { resource: ['deal'], operation: ['search'] } },
-        placeholder: 'Search by deal name, contact, or description',
-        description: 'General search term to find deals',
-      },
-      {
-        displayName: 'Search Criteria',
-        name: 'criteria',
-        type: 'string',
-        default: '',
-        displayOptions: { show: { resource: ['deal'], operation: ['search'] } },
-        placeholder: 'Specific search criteria',
-        description: 'Additional search criteria',
-      },
-      {
-        displayName: 'Return Only List',
-        name: 'returnOnlyList',
-        type: 'boolean',
-        default: false,
-        displayOptions: { show: { resource: ['deal'], operation: ['search'] } },
-        description: 'Whether to return only the deals list instead of the full API response',
-      },
+
 
       // Filters section for Search Deals
       {
@@ -772,13 +735,22 @@ export class Groner implements INodeType {
         description: 'The note content',
       },
       {
-        displayName: 'Marcações',
-        name: 'marcacoes',
-        type: 'string',
-        default: '',
+        displayName: 'Additional Fields',
+        name: 'additionalFields',
+        type: 'collection',
+        placeholder: 'Add Field',
+        default: {},
         displayOptions: { show: { resource: ['note'], operation: ['add'] } },
-        placeholder: '@user1, @user2',
-        description: 'Mentions or tags',
+        options: [
+          {
+            displayName: 'Marcações',
+            name: 'marcacoes',
+            type: 'string',
+            default: '',
+            placeholder: '@user1, @user2',
+            description: 'Mentions or tags',
+          },
+        ],
       },
 
       // ===== CAMPOS PARA MOVE DEAL =====
@@ -803,12 +775,21 @@ export class Groner implements INodeType {
         description: 'The status to move the deal to. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
       },
       {
-        displayName: 'Validar Status Disponíveis',
-        name: 'validaStatusDisponivel',
-        type: 'boolean',
-        default: false,
+        displayName: 'Additional Options',
+        name: 'additionalOptions',
+        type: 'collection',
+        placeholder: 'Add Option',
+        default: {},
         displayOptions: { show: { resource: ['deal'], operation: ['move'] } },
-        description: 'Whether to validate available statuses before moving the deal',
+        options: [
+          {
+            displayName: 'Validar Status Disponíveis',
+            name: 'validaStatusDisponivel',
+            type: 'boolean',
+            default: false,
+            description: 'Whether to validate available statuses before moving the deal',
+          },
+        ],
       },
 
       // ===== CAMPOS PARA GET QUOTE =====
@@ -902,28 +883,35 @@ export class Groner implements INodeType {
         description: 'Task title',
       },
       {
-        displayName: 'Description',
-        name: 'descricao',
-        type: 'string',
-        typeOptions: { rows: 3 },
-        default: '',
+        displayName: 'Additional Fields',
+        name: 'additionalFields',
+        type: 'collection',
+        placeholder: 'Add Field',
+        default: {},
         displayOptions: { show: { resource: ['task'], operation: ['create'] } },
-        description: 'Task description',
-      },
-      {
-        displayName: 'Start Date',
-        name: 'dataInicial',
-        type: 'string',
-        default: '',
-        displayOptions: { show: { resource: ['task'], operation: ['create'] } },
-        description: 'Initial date',
-      },
-      {
-        displayName: 'Delivery Date',
-        name: 'dataEntrega',
-        type: 'string',
-        default: '',
-        displayOptions: { show: { resource: ['task'], operation: ['create'] } },
+        options: [
+          {
+            displayName: 'Description',
+            name: 'descricao',
+            type: 'string',
+            typeOptions: { rows: 3 },
+            default: '',
+            description: 'Task description',
+          },
+          {
+            displayName: 'Start Date',
+            name: 'dataInicial',
+            type: 'string',
+            default: '',
+            description: 'Initial date',
+          },
+          {
+            displayName: 'Delivery Date',
+            name: 'dataEntrega',
+            type: 'string',
+            default: '',
+          },
+        ],
       },
       {
         displayName: 'Project ID',
@@ -1131,91 +1119,86 @@ export class Groner implements INodeType {
         description: 'The message to send',
       },
       {
-        displayName: 'Celular',
-        name: 'celular',
-        type: 'string',
-        default: '',
+        displayName: 'Additional Options',
+        name: 'additionalOptions',
+        type: 'collection',
+        placeholder: 'Add Option',
+        default: {},
         displayOptions: { show: { resource: ['whatsapp'], operation: ['send'] } },
-        placeholder: '+55 11 99999-9999',
-        description: 'Direct phone number',
-      },
-      {
-        displayName: 'Url Da Imagem',
-        name: 'urlImagem',
-        type: 'string',
-        default: '',
-        displayOptions: { show: { resource: ['whatsapp'], operation: ['send'] } },
-        placeholder: 'https://example.com/image.jpg',
-        description: 'Image attachment URL',
-      },
-      {
-        displayName: 'Url Do Audio',
-        name: 'urlAudio',
-        type: 'string',
-        default: '',
-        displayOptions: { show: { resource: ['whatsapp'], operation: ['send'] } },
-        placeholder: 'https://example.com/audio.mp3',
-        description: 'Audio attachment URL',
-      },
-      {
-        displayName: 'Url Do Video',
-        name: 'urlVideo',
-        type: 'string',
-        default: '',
-        displayOptions: { show: { resource: ['whatsapp'], operation: ['send'] } },
-        placeholder: 'https://example.com/video.mp4',
-        description: 'Video attachment URL',
-      },
-      {
-        displayName: 'Url Do Documento',
-        name: 'urlDocumento',
-        type: 'string',
-        default: '',
-        displayOptions: { show: { resource: ['whatsapp'], operation: ['send'] } },
-        placeholder: 'https://example.com/document.pdf',
-        description: 'Document attachment URL',
-      },
-			{
-        displayName: 'Loja ID',
-        name: 'lojaId',
-        type: 'number',
-        typeOptions: { minValue: 1 },
-        default: '',
-        displayOptions: { show: { resource: ['whatsapp'], operation: ['send'] } },
-        placeholder: '12345',
-        description: 'The lead ID to send message to',
-      },
-      {
-        displayName: 'Enviar para Pré Vendedor',
-        name: 'preVendedor',
-        type: 'boolean',
-        default: false,
-        displayOptions: { show: { resource: ['whatsapp'], operation: ['send'] } },
-        description: 'Whether to send to Pre-Seller',
-      },
-      {
-        displayName: 'Enviar para Vendedor',
-        name: 'vendedor',
-        type: 'boolean',
-        default: false,
-        displayOptions: { show: { resource: ['whatsapp'], operation: ['send'] } },
-        description: 'Whether to send to Seller',
-      },
-      {
-        displayName: 'Enviar Para Técnico',
-        name: 'tecnico',
-        type: 'boolean',
-        default: false,
-        displayOptions: { show: { resource: ['whatsapp'], operation: ['send'] } },
-        description: 'Whether to send to Technician',
-      },
-      {
-        displayName: 'Enviar Para Lead',
-        name: 'lead',
-        type: 'boolean',
-        default: false,
-        displayOptions: { show: { resource: ['whatsapp'], operation: ['send'] } },
-        description: 'Whether to send to Lead',
+        options: [
+          {
+            displayName: 'Celular',
+            name: 'celular',
+            type: 'string',
+            default: '',
+            placeholder: '+55 11 99999-9999',
+            description: 'Direct phone number',
+          },
+          {
+            displayName: 'Enviar Para Lead',
+            name: 'lead',
+            type: 'boolean',
+            default: false,
+          },
+          {
+            displayName: 'Enviar para Pré Vendedor',
+            name: 'preVendedor',
+            type: 'boolean',
+            default: false,
+          },
+          {
+            displayName: 'Enviar Para Técnico',
+            name: 'tecnico',
+            type: 'boolean',
+            default: false,
+          },
+          {
+            displayName: 'Enviar para Vendedor',
+            name: 'vendedor',
+            type: 'boolean',
+            default: false,
+          },
+          {
+            displayName: 'Loja ID',
+            name: 'lojaId',
+            type: 'number',
+            typeOptions: { minValue: 1 },
+            default: '',
+            placeholder: '12345',
+          },
+          {
+            displayName: 'Url Da Imagem',
+            name: 'urlImagem',
+            type: 'string',
+            default: '',
+            placeholder: 'https://example.com/image.jpg',
+            description: 'Image attachment URL',
+          },
+          {
+            displayName: 'Url Do Audio',
+            name: 'urlAudio',
+            type: 'string',
+            default: '',
+            placeholder: 'https://example.com/audio.mp3',
+            description: 'Audio attachment URL',
+          },
+          {
+            displayName: 'Url Do Documento',
+            name: 'urlDocumento',
+            type: 'string',
+            default: '',
+            placeholder: 'https://example.com/document.pdf',
+            description: 'Document attachment URL',
+          },
+          {
+            displayName: 'Url Do Video',
+            name: 'urlVideo',
+            type: 'string',
+            default: '',
+            placeholder: 'https://example.com/video.mp4',
+            description: 'Video attachment URL',
+          },
+        ],
       },
     ],
   };
@@ -1307,7 +1290,7 @@ export class Groner implements INodeType {
               tipoProjetoId: additionalFields.tipoProjetoId || '',
             };
 
-            const response = await this.helpers.requestWithAuthentication.call(this, 'gronerApi', {
+            const response = await this.helpers.httpRequestWithAuthentication.call(this, 'gronerApi', {
               method: 'POST',
               url: `${baseURL}/api/lead/FluentForm/${codOrigem}`,
               headers: {
@@ -1323,7 +1306,7 @@ export class Groner implements INodeType {
             const propriedade = this.getNodeParameter('propriedade', i) as string;
             const valor = this.getNodeParameter('valor', i) as string;
 
-            const response = await this.helpers.requestWithAuthentication.call(this, 'gronerApi', {
+            const response = await this.helpers.httpRequestWithAuthentication.call(this, 'gronerApi', {
               method: 'PUT',
               url: `${baseURL}/api/projeto/${dealId}`,
               body: {
@@ -1337,7 +1320,7 @@ export class Groner implements INodeType {
           else if (operation === 'getQuote') {
             const dealId = this.getNodeParameter('dealId', i) as string;
 
-            const response = await this.helpers.requestWithAuthentication.call(this, 'gronerApi', {
+            const response = await this.helpers.httpRequestWithAuthentication.call(this, 'gronerApi', {
               method: 'GET',
               url: `${baseURL}/api/orcamento/unico/${dealId}?pageSize=5&pageNumber=1`,
               headers: {
@@ -1351,9 +1334,10 @@ export class Groner implements INodeType {
           else if (operation === 'move') {
             const dealId = this.getNodeParameter('dealId', i) as string;
             const statusId = this.getNodeParameter('statusId', i) as string;
-            const validaStatusDisponivel = this.getNodeParameter('validaStatusDisponivel', i) as boolean;
+            const moveOptions = this.getNodeParameter('additionalOptions', i, {}) as any;
+            const validaStatusDisponivel = (moveOptions.validaStatusDisponivel as boolean) ?? false;
 
-            const response = await this.helpers.requestWithAuthentication.call(this, 'gronerApi', {
+            const response = await this.helpers.httpRequestWithAuthentication.call(this, 'gronerApi', {
               method: 'POST',
               url: `${baseURL}/api/projeto/adicionarStatus/${dealId}?validaStatusDisponivel=${validaStatusDisponivel}`,
               body: {
@@ -1364,17 +1348,16 @@ export class Groner implements INodeType {
           }
 
           else if (operation === 'search') {
-            const pageSize = this.getNodeParameter('pageSize', i) as number;
-            const query = this.getNodeParameter('query', i) as string;
-            const criterio = this.getNodeParameter('criteria', i) as string;
-
-            // Get optional parameters with safe defaults
             const filters = this.getNodeParameter('filters', i, {}) as any;
             const location = this.getNodeParameter('location', i, {}) as any;
             const financial = this.getNodeParameter('financial', i, {}) as any;
             const dates = this.getNodeParameter('dates', i, {}) as any;
             const additionalFields = this.getNodeParameter('additionalFields', i, {}) as any;
-            const returnOnlyList = this.getNodeParameter('returnOnlyList', i) as boolean;
+
+            const pageSize = additionalFields.pageSize ?? 20;
+            const query = additionalFields.query ?? '';
+            const criterio = additionalFields.criteria ?? '';
+            const returnOnlyList = additionalFields.returnOnlyList ?? false;
 
             const qs: any = {
               pageSize,
@@ -1427,7 +1410,7 @@ export class Groner implements INodeType {
               }
             });
 
-              const response = await this.helpers.requestWithAuthentication.call(this, 'gronerApi', {
+              const response = await this.helpers.httpRequestWithAuthentication.call(this, 'gronerApi', {
               method: 'GET',
               url: `${baseURL}/api/projeto/cards`,
               headers: {
@@ -1447,7 +1430,7 @@ export class Groner implements INodeType {
             const propriedade = this.getNodeParameter('propriedade', i) as string;
             const valor = this.getNodeParameter('valor', i) as string;
 
-            const response = await this.helpers.requestWithAuthentication.call(this, 'gronerApi', {
+            const response = await this.helpers.httpRequestWithAuthentication.call(this, 'gronerApi', {
               method: 'PUT',
               url: `${baseURL}/api/lead/${contactId}`,
               body: {
@@ -1463,15 +1446,16 @@ export class Groner implements INodeType {
         else if (resource === 'task') {
           if (operation === 'create') {
             const titulo = this.getNodeParameter('titulo', i) as string;
-            const descricao = this.getNodeParameter('descricao', i) as string;
+            const taskAdditional = this.getNodeParameter('additionalFields', i, {}) as any;
+            const descricao = taskAdditional.descricao as string;
             const tipoId = this.getNodeParameter('tipoId', i) as string;
             const statusId = this.getNodeParameter('statusId', i) as string;
             const projetoId = this.getNodeParameter('projetoId', i) as number;
             const usuariosIds = this.getNodeParameter('usuariosIds', i) as string[];
-            const dataInicial = this.getNodeParameter('dataInicial', i) as string;
-            const dataEntrega = this.getNodeParameter('dataEntrega', i) as string;
+            const dataInicial = taskAdditional.dataInicial as string;
+            const dataEntrega = taskAdditional.dataEntrega as string;
 
-            const response = await this.helpers.requestWithAuthentication.call(this, 'gronerApi', {
+            const response = await this.helpers.httpRequestWithAuthentication.call(this, 'gronerApi', {
               method: 'POST',
               url: `${baseURL}/api/tarefa`,
               headers: {
@@ -1519,7 +1503,7 @@ export class Groner implements INodeType {
               }
             });
 
-            const response = await this.helpers.requestWithAuthentication.call(this, 'gronerApi', {
+            const response = await this.helpers.httpRequestWithAuthentication.call(this, 'gronerApi', {
               method: 'GET',
               url: `${baseURL}/api/tarefa`,
               headers: {
@@ -1537,9 +1521,10 @@ export class Groner implements INodeType {
           if (operation === 'add') {
             const dealId = this.getNodeParameter('dealId', i) as number;
             const ocorrencia = this.getNodeParameter('ocorrencia', i) as string;
-            const marcacoes = this.getNodeParameter('marcacoes', i) as string;
+            const noteAdditional = this.getNodeParameter('additionalFields', i, {}) as any;
+            const marcacoes = noteAdditional.marcacoes as string;
 
-            const response = await this.helpers.requestWithAuthentication.call(this, 'gronerApi', {
+            const response = await this.helpers.httpRequestWithAuthentication.call(this, 'gronerApi', {
               method: 'POST',
               url: `${baseURL}/api/projeto/adicionarocorrencia/${dealId}`,
               body: {
@@ -1557,7 +1542,7 @@ export class Groner implements INodeType {
             const dealId = this.getNodeParameter('dealId', i) as number;
             const tagIds = this.getNodeParameter('tagIds', i) as string;
 
-            const response = await this.helpers.requestWithAuthentication.call(this, 'gronerApi', {
+            const response = await this.helpers.httpRequestWithAuthentication.call(this, 'gronerApi', {
               method: 'POST',
               url: `${baseURL}/api/projeto/AlterarEtiquetas/${dealId}`,
               body: tagIds,
@@ -1571,18 +1556,19 @@ export class Groner implements INodeType {
           if (operation === 'send') {
             const leadId = this.getNodeParameter('leadId', i) as number;
             const mensagem = this.getNodeParameter('mensagem', i) as string;
-            const celular = this.getNodeParameter('celular', i) as string;
-            const urlImagem = this.getNodeParameter('urlImagem', i) as string;
-            const urlAudio = this.getNodeParameter('urlAudio', i) as string;
-            const urlVideo = this.getNodeParameter('urlVideo', i) as string;
-            const urlDocumento = this.getNodeParameter('urlDocumento', i) as string;
-            const lojaId = this.getNodeParameter('lojaId', i) as number;
-            const preVendedor = this.getNodeParameter('preVendedor', i) as boolean;
-            const vendedor = this.getNodeParameter('vendedor', i) as boolean;
-            const tecnico = this.getNodeParameter('tecnico', i) as boolean;
-            const lead = this.getNodeParameter('lead', i) as boolean;
+            const waOptions = this.getNodeParameter('additionalOptions', i, {}) as any;
+            const celular = waOptions.celular as string;
+            const urlImagem = waOptions.urlImagem as string;
+            const urlAudio = waOptions.urlAudio as string;
+            const urlVideo = waOptions.urlVideo as string;
+            const urlDocumento = waOptions.urlDocumento as string;
+            const lojaId = waOptions.lojaId as number;
+            const preVendedor = (waOptions.preVendedor as boolean) ?? false;
+            const vendedor = (waOptions.vendedor as boolean) ?? false;
+            const tecnico = (waOptions.tecnico as boolean) ?? false;
+            const lead = (waOptions.lead as boolean) ?? false;
 
-            const response = await this.helpers.requestWithAuthentication.call(this, 'gronerApi', {
+            const response = await this.helpers.httpRequestWithAuthentication.call(this, 'gronerApi', {
               method: 'POST',
               url: `${baseURL}/api/WhatsApp/enviarMensagem`,
               body: {

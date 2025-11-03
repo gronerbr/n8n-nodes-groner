@@ -18,7 +18,7 @@ export async function getTags(this: ILoadOptionsFunctions) {
 		json: true,
 	};
 
-	const response = await this.helpers.requestWithAuthentication.call(this, 'gronerApi', options);
+    const response = await this.helpers.httpRequestWithAuthentication.call(this, 'gronerApi', options);
 
 	return (response.Content?.list || []).map((item: { id: string, nome: string }) => ({
 		name: item.nome,

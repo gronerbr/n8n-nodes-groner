@@ -19,7 +19,7 @@ export async function getEtapas(this: ILoadOptionsFunctions): Promise<Array<{ na
 		json: true,
 	};
 
-	const response = await this.helpers.requestWithAuthentication.call(this, 'gronerApi', options);
+    const response = await this.helpers.httpRequestWithAuthentication.call(this, 'gronerApi', options);
 
 	const etapas = response?.Content?.list || [];
 

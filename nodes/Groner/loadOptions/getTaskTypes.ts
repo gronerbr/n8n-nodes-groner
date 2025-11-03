@@ -19,7 +19,7 @@ export async function getTaskTypes(this: ILoadOptionsFunctions): Promise<Array<{
 		json: true,
 	};
 
-	const response = await this.helpers.requestWithAuthentication.call(this, 'gronerApi', options);
+    const response = await this.helpers.httpRequestWithAuthentication.call(this, 'gronerApi', options);
 
 	const tipos = response?.Content?.list || [];
 

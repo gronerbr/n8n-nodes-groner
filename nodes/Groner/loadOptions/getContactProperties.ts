@@ -16,7 +16,7 @@ export async function getContactProperties(this: ILoadOptionsFunctions): Promise
 		json: true,
 	};
 
-	const response = await this.helpers.requestWithAuthentication.call(this, 'gronerApi', options);
+    const response = await this.helpers.httpRequestWithAuthentication.call(this, 'gronerApi', options);
 
 	const propriedades = response?.Content || [];
 
