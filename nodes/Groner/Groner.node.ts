@@ -594,6 +594,37 @@ export class Groner implements INodeType {
         displayOptions: { show: { resource: ['deal'], operation: ['search'] } },
         options: [
           {
+            displayName: 'Page Size',
+            name: 'pageSize',
+            type: 'number',
+            typeOptions: { minValue: 1, maxValue: 100 },
+            default: 20,
+            description: 'Number of deals to return per page',
+          },
+          {
+            displayName: 'Search Query',
+            name: 'query',
+            type: 'string',
+            default: '',
+            placeholder: 'Search by deal name, contact, or description',
+            description: 'General search term to find deals',
+          },
+          {
+            displayName: 'Search Criteria',
+            name: 'criteria',
+            type: 'string',
+            default: '',
+            placeholder: 'Specific search criteria',
+            description: 'Additional search criteria',
+          },
+          {
+            displayName: 'Return Only List',
+            name: 'returnOnlyList',
+            type: 'boolean',
+            default: false,
+            description: 'Whether to return only the deals list instead of the full API response',
+          },
+          {
             displayName: 'Ad Set',
             name: 'adSet',
             type: 'string',
